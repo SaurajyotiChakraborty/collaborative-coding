@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  Admin
+  User
+}
+
+enum QuestionDifficulty {
+  Easy
+  Medium
+  Hard
+}
+
+enum CompetitionMode {
+  Ai
+  Human
+}
+
+enum CompetitionStatus {
+  Waiting
+  InProgress
+  Completed
+}
+
+enum NotificationType {
+  ChallengeRequest
+  CompetitionStart
+  Result
+}
+
+enum WorkspaceStatus {
+  Active
+  Synced
+  Archived
+  PendingDeletion
+}
+
+enum WorkspaceRole {
+  Leader
+  Maintainer
+  Contributor
+  Viewer
+}
+
+model User {
+  id                      String   @id @default(uuid()) // Identity replacement
+  username                String   @unique
+  email                   String   @unique
+  password                String?  // Optional: for credentials auth, null for OAuth-only users
+  role                    UserRole @default(User)
+  rating                  Int      @default(1200)
+  xp                      BigInt   @default(0)
+  titles                  String[]
+  achievements            String[]
+  isCheater               Boolean  @default(false)
+  cheaterRedemptionCount  Int      @default(3)
+  createdAt               DateTime @default(now())
+
+  createdQuestions        Question[]
+  createdCompetitions     Competition[]
+  participatedCompetitions Competition[] @relation("CompetitionParticipants")
+  submissions             Submission[]
+  notifications           Notification[]
+  workspaceMemberships    WorkspaceMember[]
+  leaderboardEntry        LeaderboardEntry?
+  workspaceFiles          WorkspaceFile[]      @relation("LastModifiedBy")
+  workspaceLocks          FileLock[]
+  workspaceChats          WorkspaceChat[]
+  
+  // Relations for workspace leadership (optional if just checking ID)
+  ledWorkspaces           WorkspaceGroup[]     @relation("Leader")
+
+  @@map("users")
+}
+
+model Question {
+  id              Int                @id @default(autoincrement())
+  title           String
+  description     String
+  difficulty      QuestionDifficulty
+  testCases       Json               // Array of {input, output}
+  constraints     String
+  tags            String[]
+  createdById     String
+  createdBy       User               @relation(fields: [createdById], references: [id])
+  isAiGenerated   Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  
+  submissions     Submission[]
+  competitions    Competition[]      @relation("CompetitionQuestions")
+
+  @@map("questions")
+}
+
+model Competition {
+  id                  Int               @id @default(autoincrement())
+  mode                CompetitionMode
+  maxParticipants     Int
+  // Participants stored as many-to-many relation ideally, but Spacetime used Vec<Identity>
+  // Here we normalize to a relation table or implicit relation
+  participants        User[]            @relation("CompetitionParticipants")
+  
+  questions           Question[]        @relation("CompetitionQuestions")
+  
+  startTime           DateTime?
+  endTime             DateTime?
+  status              CompetitionStatus @default(Waiting)
+  hasTimeLimit        Boolean           @default(false)
+  timeLimitMinutes    Int?
+  
+  createdById         String
+  createdBy           User              @relation(fields: [createdById], references: [id])
+  createdAt           DateTime          @default(now())
+
+  submissions         Submission[]
+
+  @@map("competitions")
+}
+
+model Submission {
+  id                  Int       @id @default(autoincrement())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id])
+  
+  competitionId       Int
+  competition         Competition @relation(fields: [competitionId], references: [id])
+  
+  questionId          Int
+  question            Question    @relation(fields: [questionId], references: [id])
+  
+  code                String
+  language            String
+  timeComplexity      String
+  spaceComplexity     String
+  complexityScore     Int       @default(0)
+  allTestsPassed      Boolean
+  executionTimeMs     Int
+  submittedAt         DateTime  @default(now())
+
+  @@map("submissions")
+}
+
+model LeaderboardEntry {
+  userId              String    @id
+  user                User      @relation(fields: [userId], references: [id])
+  
+  rank                Int
+  totalPoints         BigInt
+  totalWins           Int
+  currentStreak       Int
+  bestStreak          Int
+  competitionsCompleted Int
+  updatedAt           DateTime  @updatedAt
+
+  @@map("leaderboard")
+}
+
+model Notification {
+  id                  Int              @id @default(autoincrement())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  
+  type                NotificationType
+  message             String
+  competitionId       Int?
+  isRead              Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+model WorkspaceGroup {
+  id                  Int               @id @default(autoincrement())
+  name                String
+  leaderId            String
+  leader              User              @relation("Leader", fields: [leaderId], references: [id])
+  
+  inviteCode          String            @unique
+  gitRepoUrl          String
+  gitBranch           String
+  cloudStoragePath    String
+  createdAt           DateTime          @default(now())
+  status              WorkspaceStatus   @default(Active)
+
+  members             WorkspaceMember[]
+  files               WorkspaceFile[]
+  chats               WorkspaceChat[]
+  locks               FileLock[]
+
+  @@map("workspace_groups")
+}
+
+model WorkspaceMember {
+  id                  Int             @id @default(autoincrement())
+  workspaceId         Int
+  workspace           WorkspaceGroup  @relation(fields: [workspaceId], references: [id])
+  
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  
+  role                WorkspaceRole
+  joinedAt            DateTime        @default(now())
+  gitUsername         String
+  isOnline            Boolean         @default(false)
+
+  @@map("workspace_members")
+}
+
+model FileLock {
+  id                  Int             @id @default(autoincrement())
+  workspaceId         Int
+  workspace           WorkspaceGroup  @relation(fields: [workspaceId], references: [id])
+  
+  filePath            String
+  lockedById          String
+  lockedBy            User            @relation(fields: [lockedById], references: [id])
+  
+  lockedAt            DateTime        @default(now())
+  lastActivity        DateTime
+
+  @@map("file_locks")
+}
+
+model WorkspaceFile {
+  id                  Int             @id @default(autoincrement())
+  workspaceId         Int
+  workspace           WorkspaceGroup  @relation(fields: [workspaceId], references: [id])
+  
+  filePath            String
+  content             String
+  
+  lastModifiedById    String
+  lastModifiedBy      User            @relation("LastModifiedBy", fields: [lastModifiedById], references: [id])
+  
+  lastModifiedAt      DateTime        @updatedAt
+  version             Int             @default(1)
+
+  @@unique([workspaceId, filePath])
+  @@map("workspace_files")
+}
+
+model WorkspaceChat {
+  id                  Int             @id @default(autoincrement())
+  workspaceId         Int
+  workspace           WorkspaceGroup  @relation(fields: [workspaceId], references: [id])
+  
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  
+  username            String
+  message             String
+  timestamp           DateTime        @default(now())
+
+  @@map("workspace_chats")
+}

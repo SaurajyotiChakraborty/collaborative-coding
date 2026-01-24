@@ -1,0 +1,21 @@
+{
+    "name": "@optimize-coder/judge-engine",
+    "version": "1.0.0",
+    "private": true,
+    "main": "src/index.js",
+    "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js"
+    },
+    "dependencies": {
+        "dockerode": "^4.0.9",
+        "ioredis": "^5.3.2"
+    },
+    "devDependencies": {
+        "@types/dockerode": "^4.0.1",
+        "@types/node": "^20.11.5",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
+    }
+}

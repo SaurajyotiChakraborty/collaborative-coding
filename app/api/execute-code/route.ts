@@ -1,156 +1,96 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DockerCodeExecutor } from '@/packages/judge-engine/src/docker-executor';
+import { executeCodeSchema } from '@/lib/validations';
+import { logInfo, logError, logWarn } from '@/lib/logger';
+import { ZodError } from 'zod';
 
-interface ExecuteCodeRequest {
-  code: string;
-  language: string;
-  testCases: Array<{ input: string; expectedOutput: string }>;
-}
+export const maxDuration = 60; // 60 seconds max for code execution
 
-interface Judge0Response {
-  stdout: string | null;
-  stderr: string | null;
-  status: {
-    id: number;
-    description: string;
-  };
-  time: string;
-  memory: number;
-}
+export async function POST(request: NextRequest) {
+  const requestId = crypto.randomUUID();
 
-const LANGUAGE_IDS: Record<string, number> = {
-  javascript: 63,
-  python: 71,
-  java: 62,
-  cpp: 54,
-  c: 50,
-  typescript: 74,
-  go: 60,
-  rust: 73,
-};
-
-export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json() as ExecuteCodeRequest;
-    const { code, language, testCases } = body;
+    const body = await request.json();
 
-    if (!code || !language || !testCases) {
+    // Validate input with Zod
+    const validated = executeCodeSchema.parse(body);
+    const { code, language, testCases, timeLimit, memoryLimit } = validated;
+
+    logInfo('Code execution request received', {
+      requestId,
+      language,
+      testCaseCount: testCases.length,
+      codeLength: code.length,
+    });
+    if (!code || !language || !testCases || !Array.isArray(testCases)) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Invalid request: code, language, and testCases are required' },
         { status: 400 }
       );
     }
 
-    const languageId = LANGUAGE_IDS[language.toLowerCase()];
-    if (!languageId) {
+    if (!['javascript', 'python', 'java', 'cpp'].includes(language)) {
       return NextResponse.json(
         { error: 'Unsupported language' },
         { status: 400 }
       );
     }
 
-    const results = await Promise.all(
-      testCases.map(async (testCase) => {
-        try {
-          const submissionResponse = await fetch('https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-RapidAPI-Key': process.env.JUDGE0_API_KEY || 'demo-key',
-              'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-            },
-            body: JSON.stringify({
-              source_code: code,
-              language_id: languageId,
-              stdin: testCase.input,
-              expected_output: testCase.expectedOutput,
-            }),
-          });
+    // Security: Limit code size
+    if (code.length > 50000) {
+      return NextResponse.json(
+        { error: 'Code too large (max 50KB)' },
+        { status: 400 }
+      );
+    }
 
-          if (!submissionResponse.ok) {
-            return {
-              passed: false,
-              input: testCase.input,
-              expected: testCase.expectedOutput,
-              actual: null,
-              error: 'Execution failed',
-              time: 0,
-              memory: 0,
-            };
-          }
+    // Security: Limit test cases
+    if (testCases.length > 100) {
+      return NextResponse.json(
+        { error: 'Too many test cases (max 100)' },
+        { status: 400 }
+      );
+    }
 
-          const result = await submissionResponse.json() as Judge0Response;
-
-          const passed = result.stdout?.trim() === testCase.expectedOutput.trim();
-          
-          return {
-            passed,
-            input: testCase.input,
-            expected: testCase.expectedOutput,
-            actual: result.stdout?.trim() || result.stderr?.trim() || null,
-            error: result.stderr || null,
-            time: parseFloat(result.time || '0'),
-            memory: result.memory || 0,
-            statusDescription: result.status.description,
-          };
-        } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          return {
-            passed: false,
-            input: testCase.input,
-            expected: testCase.expectedOutput,
-            actual: null,
-            error: errorMessage,
-            time: 0,
-            memory: 0,
-          };
-        }
-      })
-    );
-
-    const allPassed = results.every((r) => r.passed);
-    const totalTime = results.reduce((sum, r) => sum + r.time, 0);
-    const avgMemory = results.reduce((sum, r) => sum + r.memory, 0) / results.length;
-
-    const complexityEstimate = estimateComplexity(code, totalTime, testCases.length);
-
-    return NextResponse.json({
-      success: true,
-      allPassed,
-      results,
-      totalTime,
-      avgMemory,
-      timeComplexity: complexityEstimate.time,
-      spaceComplexity: complexityEstimate.space,
+    // Execute code in Docker container
+    const executor = new DockerCodeExecutor();
+    const result = await executor.execute({
+      language,
+      code,
+      testCases,
+      timeLimit: timeLimit || 5000,
+      memoryLimit: memoryLimit || 256,
     });
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+
+    logInfo('Code execution completed successfully', {
+      requestId,
+      allPassed: result.allPassed,
+      totalTime: result.totalTime,
+    });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      logWarn('Validation error in code execution', {
+        requestId,
+        errors: error.errors,
+      });
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    logError('Code execution failed', error as Error, { requestId });
     return NextResponse.json(
-      { error: errorMessage },
+      {
+        error: 'Execution failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
-}
-
-function estimateComplexity(code: string, executionTime: number, testCaseCount: number): { time: string; space: string } {
-  const lowerCode = code.toLowerCase();
-  
-  let timeComplexity = 'O(n)';
-  if (lowerCode.includes('for') && lowerCode.split('for').length > 2) {
-    timeComplexity = 'O(n²)';
-  } else if (lowerCode.includes('sort')) {
-    timeComplexity = 'O(n log n)';
-  } else if (lowerCode.includes('recursion') || lowerCode.includes('fibonacci')) {
-    timeComplexity = 'O(2^n)';
-  } else if (executionTime < 10 && testCaseCount > 0) {
-    timeComplexity = 'O(1)';
-  }
-
-  let spaceComplexity = 'O(1)';
-  if (lowerCode.includes('array') || lowerCode.includes('list') || lowerCode.includes('[]')) {
-    spaceComplexity = 'O(n)';
-  } else if (lowerCode.includes('matrix') || (lowerCode.split('array').length > 2)) {
-    spaceComplexity = 'O(n²)';
-  }
-
-  return { time: timeComplexity, space: spaceComplexity };
 }

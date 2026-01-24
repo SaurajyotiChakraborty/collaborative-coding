@@ -1,154 +1,142 @@
 import { NextRequest, NextResponse } from 'next/server';
-import logger from '@/lib/logger';
-import { GitOperations } from '@/lib/git-operations';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { mkdir, writeFile, rm } from 'fs/promises';
+import { join } from 'path';
 
-const gitOps = new GitOperations();
+const execAsync = promisify(exec);
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { operation, workspaceId, commitMessage, repoUrl, branch, cloudStoragePath, githubToken } = body;
+    const { operation, repoUrl, branch, workspaceId, commitMessage, files } = await request.json();
 
-    logger.info(`Git operation requested: ${operation} for workspace ${workspaceId}`);
+    const workspaceDir = join('/tmp/workspaces', workspaceId.toString());
 
     switch (operation) {
       case 'clone':
-        return await handleClone(repoUrl, branch, workspaceId, githubToken);
-      
-      case 'push':
-        return await handlePush(workspaceId, repoUrl, branch, commitMessage, cloudStoragePath, githubToken);
-      
+        return await handleClone(repoUrl, branch, workspaceDir);
+
       case 'pull':
-        return await handlePull(workspaceId, repoUrl, branch, githubToken);
-      
+        return await handlePull(workspaceDir);
+
+      case 'push':
+        return await handlePush(workspaceDir, commitMessage, files);
+
+      case 'status':
+        return await handleStatus(workspaceDir);
+
       default:
-        return NextResponse.json(
-          { error: 'Invalid operation' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid operation' }, { status: 400 });
     }
   } catch (error) {
-    logger.error('Git operation error:', error);
+    console.error('Git operation error:', error);
     return NextResponse.json(
-      { error: 'Git operation failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Git operation failed', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
 }
 
-async function handleClone(
-  repoUrl: string,
-  branch: string,
-  workspaceId: string,
-  githubToken?: string
-): Promise<NextResponse> {
+async function handleClone(repoUrl: string, branch: string, workspaceDir: string) {
   try {
-    logger.info(`Cloning repository ${repoUrl} branch ${branch}`);
+    // Create workspace directory
+    await mkdir(workspaceDir, { recursive: true });
 
-    const result = await gitOps.cloneRepository({
-      repoUrl,
-      branch,
-      workspaceId,
-      githubToken,
-    });
+    // Clone repository
+    const { stdout, stderr } = await execAsync(
+      `git clone --branch ${branch} ${repoUrl} ${workspaceDir}`,
+      { timeout: 60000 }
+    );
 
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Clone failed', details: result.error },
-        { status: 500 }
-      );
+    // Install dependencies (if package.json exists)
+    try {
+      await execAsync('npm install', { cwd: workspaceDir, timeout: 120000 });
+    } catch (e) {
+      console.log('No package.json or install failed, continuing...');
     }
 
     return NextResponse.json({
       success: true,
-      cloudStoragePath: result.cloudStoragePath,
-      filesCount: result.filesCount,
       message: 'Repository cloned successfully',
+      output: stdout
     });
   } catch (error) {
-    logger.error('Clone error:', error);
     return NextResponse.json(
-      { error: 'Clone failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Clone failed', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
 }
 
-async function handlePush(
-  workspaceId: string,
-  repoUrl: string,
-  branch: string,
-  commitMessage: string,
-  cloudStoragePath: string,
-  githubToken?: string
-): Promise<NextResponse> {
+async function handlePull(workspaceDir: string) {
   try {
-    logger.info(`Pushing workspace ${workspaceId} with message: ${commitMessage}`);
-
-    const result = await gitOps.pushToRepository(
-      {
-        repoUrl,
-        branch,
-        workspaceId,
-        githubToken,
-      },
-      commitMessage,
-      cloudStoragePath
-    );
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Push failed', details: result.error },
-        { status: 500 }
-      );
-    }
+    const { stdout } = await execAsync('git pull', {
+      cwd: workspaceDir,
+      timeout: 30000
+    });
 
     return NextResponse.json({
       success: true,
-      commitHash: result.commitHash,
+      message: 'Pulled latest changes',
+      output: stdout
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Pull failed', message: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
+}
+
+async function handlePush(workspaceDir: string, commitMessage: string, files: Record<string, string>) {
+  try {
+    // Write files
+    for (const [filePath, content] of Object.entries(files)) {
+      const fullPath = join(workspaceDir, filePath);
+      await writeFile(fullPath, content, 'utf-8');
+    }
+
+    // Git add all
+    await execAsync('git add .', { cwd: workspaceDir });
+
+    // Git commit
+    await execAsync(`git commit -m "${commitMessage}"`, { cwd: workspaceDir });
+
+    // Git push
+    const { stdout } = await execAsync('git push', {
+      cwd: workspaceDir,
+      timeout: 30000
+    });
+
+    // Cleanup workspace
+    await rm(workspaceDir, { recursive: true, force: true });
+
+    return NextResponse.json({
+      success: true,
       message: 'Changes pushed successfully',
+      output: stdout
     });
   } catch (error) {
-    logger.error('Push error:', error);
     return NextResponse.json(
-      { error: 'Push failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Push failed', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
 }
 
-async function handlePull(
-  workspaceId: string,
-  repoUrl: string,
-  branch: string,
-  githubToken?: string
-): Promise<NextResponse> {
+async function handleStatus(workspaceDir: string) {
   try {
-    logger.info(`Pulling latest changes for workspace ${workspaceId}`);
-
-    const result = await gitOps.pullFromRepository({
-      repoUrl,
-      branch,
-      workspaceId,
-      githubToken,
+    const { stdout } = await execAsync('git status --short', {
+      cwd: workspaceDir
     });
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Pull failed', details: result.error },
-        { status: 500 }
-      );
-    }
 
     return NextResponse.json({
       success: true,
-      filesChanged: result.filesChanged,
-      message: 'Latest changes pulled successfully',
+      status: stdout
     });
   } catch (error) {
-    logger.error('Pull error:', error);
     return NextResponse.json(
-      { error: 'Pull failed', details: error instanceof Error ? error.message : 'Unknown error' },
+      { success: false, error: 'Status check failed', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
