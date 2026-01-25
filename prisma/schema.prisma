@@ -27,6 +27,7 @@ enum CompetitionStatus {
   Waiting
   InProgress
   Completed
+  Archived
 }
 
 enum NotificationType {
@@ -95,6 +96,12 @@ model Question {
   
   submissions     Submission[]
   competitions    Competition[]      @relation("CompetitionQuestions")
+  
+  // Practice improvements
+  canonicalSolution     String?
+  optimalTimeComplexity String?
+  optimalSpaceComplexity String?
+  optimalScore          Int? @default(100)
 
   @@map("questions")
 }

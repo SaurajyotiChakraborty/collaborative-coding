@@ -13,6 +13,22 @@ export async function createCompetition(data: {
     createdById: string;
 }) {
     try {
+        console.log('[CompetitionAction] Creating competition:', JSON.stringify(data));
+
+        // Verify the user exists to prevent P2003 errors
+        const userExists = await prisma.user.findUnique({
+            where: { id: data.createdById },
+            select: { id: true }
+        });
+
+        if (!userExists) {
+            console.error(`[CompetitionAction] User ID ${data.createdById} not found in database.`);
+            return {
+                success: false,
+                error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
         const competition = await prisma.competition.create({
             data: {
                 mode: data.mode,
@@ -58,10 +74,12 @@ export async function createCompetition(data: {
     }
 }
 
-export async function getCompetitions(status?: 'Waiting' | 'InProgress' | 'Completed') {
+export async function getCompetitions(status?: 'Waiting' | 'InProgress' | 'Completed' | 'Archived') {
     try {
         const competitions = await prisma.competition.findMany({
-            where: status ? { status } : undefined,
+            where: (status ? { status } : {
+                status: { not: 'Archived' }
+            }) as any,
             include: {
                 questions: true,
                 participants: true,

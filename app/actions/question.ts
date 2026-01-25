@@ -25,6 +25,22 @@ export async function createQuestion(data: {
     createdById: string;
 }) {
     try {
+        console.log('[QuestionAction] Creating question:', JSON.stringify(data));
+
+        // Verify user exists to prevent P2003
+        const userExists = await prisma.user.findUnique({
+            where: { id: data.createdById },
+            select: { id: true }
+        });
+
+        if (!userExists) {
+            console.error(`[QuestionAction] Creator ID ${data.createdById} not found in database.`);
+            return {
+                success: false,
+                error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
         const question = await prisma.question.create({
             data: {
                 title: data.title,

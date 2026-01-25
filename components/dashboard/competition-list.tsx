@@ -9,6 +9,7 @@ import { getCompetitions, joinCompetition } from '@/app/actions/competition';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 export const CompetitionList: React.FC = () => {
     const { data: session } = useSession();
@@ -19,7 +20,7 @@ export const CompetitionList: React.FC = () => {
     const fetchCompetitions = async () => {
         setLoading(true);
         try {
-            const result = await getCompetitions('Waiting');
+            const result = await getCompetitions();
             if (result.success && result.competitions) {
                 setCompetitions(result.competitions);
             }
@@ -85,6 +86,15 @@ export const CompetitionList: React.FC = () => {
                                             <Badge variant={comp.mode === 'Ai' ? 'default' : 'secondary'}>
                                                 {comp.mode} Mode
                                             </Badge>
+                                            <Badge
+                                                className={cn(
+                                                    comp.status === 'Waiting' ? 'bg-blue-500' :
+                                                        comp.status === 'InProgress' ? 'bg-orange-500' :
+                                                            'bg-green-600'
+                                                )}
+                                            >
+                                                {comp.status}
+                                            </Badge>
                                         </div>
                                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                             <div className="flex items-center gap-1">
@@ -107,18 +117,22 @@ export const CompetitionList: React.FC = () => {
                                                     {p.username.charAt(0).toUpperCase()}
                                                 </div>
                                             ))}
-                                            {comp.participants.length > 3 && (
-                                                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold">
-                                                    +{comp.participants.length - 3}
-                                                </div>
-                                            )}
                                         </div>
                                         <Button
-                                            onClick={() => handleJoin(comp.id)}
-                                            disabled={comp.participants.some((p: any) => p.id === session?.user?.id)}
-                                            className="bg-gradient-to-r from-purple-600 to-pink-600"
+                                            onClick={() => comp.status === 'Waiting' ? handleJoin(comp.id) : router.push(`/compete/${comp.id}`)}
+                                            disabled={comp.status === 'Waiting' && comp.participants.some((p: any) => p.id === session?.user?.id)}
+                                            className={cn(
+                                                "transition-colors",
+                                                comp.status === 'Completed' ? 'bg-gray-600' : 'bg-gradient-to-r from-purple-600 to-pink-600'
+                                            )}
                                         >
-                                            {comp.participants.some((p: any) => p.id === session?.user?.id) ? 'Joined' : 'Join Match'}
+                                            {comp.status === 'Waiting' ? (
+                                                comp.participants.some((p: any) => p.id === session?.user?.id) ? 'Joined' : 'Join Match'
+                                            ) : comp.status === 'InProgress' ? (
+                                                'Spectate'
+                                            ) : (
+                                                'View Results'
+                                            )}
                                             <ArrowRight className="h-4 w-4 ml-2" />
                                         </Button>
                                     </div>

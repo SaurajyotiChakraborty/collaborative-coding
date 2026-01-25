@@ -19,13 +19,10 @@ import {
   BookOpen,
   Zap,
   Crown,
-  Shield,
   UserPlus,
   BarChart,
-  MessageSquare,
   Bot,
   Gift,
-  Code,
   FolderGit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,19 +63,15 @@ export const SideNav: React.FC<SideNavProps> = ({ username, role, activeTab, onT
     { id: 'level', icon: Zap, label: 'Level & XP' },
     { id: 'battlepass', icon: Crown, label: 'Battle Pass' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
-    { id: 'teams', icon: Shield, label: 'Teams' },
     { id: 'friends', icon: UserPlus, label: 'Friends' },
     { id: 'tournaments', icon: Users, label: 'Tournaments' },
     { id: 'analytics', icon: BarChart, label: 'Analytics' },
-    { id: 'forum', icon: MessageSquare, label: 'Forum' },
     { id: 'ai-mentor', icon: Bot, label: 'AI Mentor' },
     { id: 'referrals', icon: Gift, label: 'Referrals' },
-    { id: 'languages', icon: Code, label: 'Languages' },
     { id: 'spectate', icon: Eye, label: 'Spectate' },
     { id: 'replays', icon: Video, label: 'Replays' },
     { id: 'profile', icon: Users, label: 'Profile' },
     { id: 'admin', icon: Settings, label: 'Admin', adminOnly: true },
-    { id: 'about', icon: InfoIcon, label: 'About' },
   ];
 
   const filteredNavItems = navItems.filter(

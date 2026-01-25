@@ -5,16 +5,37 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Code2, GraduationCap, Lightbulb, Target } from 'lucide-react';
-import type { LearningPath } from '@/types/extended-types';
+import { getLearningPaths } from '@/app/actions/practice';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 interface PracticeModeProps {
-  learningPaths: LearningPath[];
   onStartPractice: (questionId: bigint) => void;
   onStartPath: (pathId: string) => void;
 }
 
-export function PracticeMode({ learningPaths, onStartPractice, onStartPath }: PracticeModeProps): JSX.Element {
+export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps) {
+  const { data: session } = useSession();
+  const [learningPaths, setLearningPaths] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  useEffect(() => {
+    const fetchPaths = async () => {
+      setLoading(true);
+      try {
+        const result = await getLearningPaths(session?.user?.id);
+        if (result.success && result.learningPaths) {
+          setLearningPaths(result.learningPaths);
+        }
+      } catch (error) {
+        console.error('Failed to fetch learning paths:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPaths();
+  }, [session?.user?.id]);
 
   const categories = [
     { id: 'all', name: 'All Paths', icon: BookOpen },
@@ -24,9 +45,19 @@ export function PracticeMode({ learningPaths, onStartPractice, onStartPath }: Pr
     { id: 'trees', name: 'Trees', icon: GraduationCap },
   ];
 
-  const filteredPaths = selectedCategory === 'all' 
-    ? learningPaths 
+  const filteredPaths = selectedCategory === 'all'
+    ? learningPaths
     : learningPaths.filter(path => path.category === selectedCategory);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="h-64 bg-gray-100 dark:bg-gray-800 animate-pulse rounded-xl"></div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <Card className="glass-strong border-purple-200 dark:border-purple-800">

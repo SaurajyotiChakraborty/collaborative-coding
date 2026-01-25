@@ -3,41 +3,58 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { useSpacetime } from '@/hooks/use-spacetime';
-import { Eye, Users, Clock, Code } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Eye, Users, Code } from 'lucide-react';
+import { getCompetitions } from '@/app/actions/competition';
 
 interface ParticipantProgress {
+  id: string;
   username: string;
-  questionsCompleted: number;
-  totalQuestions: number;
-  currentQuestion: string;
-  lastActivity: Date;
+  submissionsCount: number;
 }
 
 interface LiveCompetition {
-  competitionId: bigint;
+  id: number;
   mode: string;
-  participants: ParticipantProgress[];
-  timeRemaining: number;
+  participants: any[];
+  startTime: Date | null;
   status: string;
 }
 
 export const SpectatorView: React.FC = () => {
-  // const { db } = useSpacetime(); // Removed
-  const [liveCompetitions, setLiveCompetitions] = useState<LiveCompetition[]>([]);
-  const [selectedCompetition, setSelectedCompetition] = useState<LiveCompetition | null>(null);
+  const [liveCompetitions, setLiveCompetitions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [spectatorCount] = useState<number>(Math.floor(Math.random() * 50) + 10);
 
-  // Removed SpacetimeDB subscription logic
-  // In production, this would fetch from Server Actions or WebSocket
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const fetchLiveCompetitions = async () => {
+    setLoading(true);
+    try {
+      const result = await getCompetitions('InProgress');
+      if (result.success && result.competitions) {
+        setLiveCompetitions(result.competitions);
+      }
+    } catch (error) {
+      console.error('Failed to fetch live competitions:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchLiveCompetitions();
+    const interval = setInterval(fetchLiveCompetitions, 30000); // Polling every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[1, 2].map((i) => (
+          <div key={i} className="h-48 bg-gray-100 dark:bg-gray-800 animate-pulse rounded-xl"></div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -47,9 +64,9 @@ export const SpectatorView: React.FC = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5" />
-                Spectator Mode
+                Live Spectator Mode
               </CardTitle>
-              <CardDescription>Watch live competitions in real-time</CardDescription>
+              <CardDescription>Watch active coding battles in real-time</CardDescription>
             </div>
             <Badge variant="secondary" className="flex items-center gap-1">
               <Users className="h-3 w-3" />
@@ -61,104 +78,74 @@ export const SpectatorView: React.FC = () => {
 
       {liveCompetitions.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center">
-            <Eye className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No live competitions at the moment</p>
+          <CardContent className="p-12 text-center">
+            <Eye className="h-12 w-12 mx-auto text-muted-foreground mb-4 opacity-20" />
+            <p className="text-muted-foreground text-lg font-medium">No live battles at the moment</p>
             <p className="text-sm text-muted-foreground mt-2">
-              Check back soon to watch coders compete!
+              Start a challenge or join one to bring the heat!
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-4">
           {liveCompetitions.map((competition) => (
             <Card
-              key={competition.competitionId.toString()}
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setSelectedCompetition(competition)}
+              key={competition.id}
+              className="hover:shadow-lg transition-all border-l-4 border-l-orange-500 overflow-hidden"
             >
-              <CardHeader>
+              <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5" />
-                    {competition.mode} Competition
-                  </CardTitle>
+                  <div className="space-y-1">
+                    <CardTitle className="flex items-center gap-2">
+                      <Code className="h-5 w-5 text-orange-500" />
+                      Battle #{competition.id}
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline">{competition.mode} Mode</Badge>
+                      <Badge className="bg-orange-500">Live</Badge>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {competition.participants.length}
+                      {competition.participants.length} Players
                     </Badge>
-                    {competition.timeRemaining > 0 && (
-                      <Badge variant="outline" className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {formatTime(competition.timeRemaining)}
-                      </Badge>
-                    )}
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="h-48">
-                  <div className="space-y-3">
-                    {competition.participants.map((participant, index) => (
-                      <div key={index} className="space-y-2 p-3 bg-gray-50 rounded-md">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">{participant.username}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {participant.questionsCompleted}/{participant.totalQuestions} completed
-                          </span>
-                        </div>
-                        <Progress
-                          value={(participant.questionsCompleted / participant.totalQuestions) * 100}
-                          className="h-2"
-                        />
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Working on: {participant.currentQuestion}</span>
-                          <span>Active {Math.floor((Date.now() - participant.lastActivity.getTime()) / 1000)}s ago</span>
-                        </div>
+                <div className="space-y-4">
+                  <div className="flex -space-x-3 overflow-hidden p-1">
+                    {competition.participants.map((p: any) => (
+                      <div
+                        key={p.id}
+                        className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-orange-500 flex items-center justify-center text-xs text-white font-bold"
+                        title={p.username}
+                      >
+                        {p.username.charAt(0).toUpperCase()}
                       </div>
                     ))}
                   </div>
-                </ScrollArea>
+
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <div className="text-xs text-muted-foreground">
+                      Started: {competition.startTime ? new Date(competition.startTime).toLocaleTimeString() : 'Recently'}
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-orange-600 hover:bg-orange-700 text-white"
+                      asChild
+                    >
+                      <a href={`/compete/${competition.id}`}>
+                        Spectate Now
+                      </a>
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
-      )}
-
-      {selectedCompetition && (
-        <Card className="border-2 border-primary">
-          <CardHeader>
-            <CardTitle>Live Competition Details</CardTitle>
-            <CardDescription>Real-time updates every 5 seconds</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold">{selectedCompetition.participants.length}</p>
-                  <p className="text-sm text-muted-foreground">Participants</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {selectedCompetition.participants.reduce((sum, p) => sum + p.questionsCompleted, 0)}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Total Submissions</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {Math.round(
-                      (selectedCompetition.participants.reduce((sum, p) => sum + p.questionsCompleted, 0) /
-                        (selectedCompetition.participants.length * selectedCompetition.participants[0]?.totalQuestions || 1)) *
-                      100
-                    )}%
-                  </p>
-                  <p className="text-sm text-muted-foreground">Avg Progress</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       )}
     </div>
   );

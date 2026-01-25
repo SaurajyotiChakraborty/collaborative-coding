@@ -1,21 +1,60 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Zap, User, Target, Share2, Award, Users, Shield, Bot, Gift, Code, Eye, Video, Settings, InfoIcon } from 'lucide-react';
+import { Trophy, Zap, User, Target, Share2, Award, Users, Bot, Gift, Code, Eye, Video, Settings } from 'lucide-react';
 import { SideNav } from '@/components/layout/side-nav';
 import { WorkspaceContainer } from '@/components/workspace/workspace-container';
 import { CompeteContainer } from '@/components/dashboard/compete-container';
 import { LeaderboardView } from '@/components/leaderboard/leaderboard-view';
+import { VideoReplay } from '@/components/replay/video-replay';
+import { SpectatorView } from '@/components/spectator/spectator-view';
+import { PracticeMode } from '@/components/practice/practice-mode';
+import { PracticeArena } from '@/components/practice/practice-arena';
+import { PerformanceAnalytics } from '@/components/analytics/performance-analytics';
+import { getUserAnalytics } from '@/app/actions/analytics';
+import type { UserAnalytics } from '@/types/extended-types';
+import { BarChart as BarChartIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [analyticsData, setAnalyticsData] = useState<UserAnalytics | null>(null);
+    const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+    const [selectedPracticeQuestion, setSelectedPracticeQuestion] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (activeTab === 'analytics' && !analyticsData && session?.user?.id) {
+            const fetchAnalytics = async () => {
+                setLoadingAnalytics(true);
+                try {
+                    const result = await getUserAnalytics(session.user.id);
+                    if (result.success && result.analytics) {
+                        setAnalyticsData(result.analytics);
+                    }
+                } catch (error) {
+                    console.error('Error fetching analytics:', error);
+                } finally {
+                    setLoadingAnalytics(false);
+                }
+            };
+            fetchAnalytics();
+        }
+    }, [activeTab, session?.user?.id, analyticsData]);
+
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (activeTab === 'profile') {
@@ -69,12 +108,42 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 );
-            case 'teams':
+            case 'spectate':
+                return <SpectatorView />;
+            case 'practice':
+                if (selectedPracticeQuestion) {
+                    return (
+                        <PracticeArena
+                            questionId={selectedPracticeQuestion}
+                            onBack={() => setSelectedPracticeQuestion(null)}
+                        />
+                    );
+                }
                 return (
-                    <div className="p-12 text-center border-2 border-dashed rounded-xl">
-                        <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                        <h2 className="text-2xl font-bold">Team System Coming Soon</h2>
-                        <p className="text-muted-foreground mt-2">Form clans and compete in group tournaments.</p>
+                    <PracticeMode
+                        onStartPractice={(qId) => {
+                            setSelectedPracticeQuestion(Number(qId));
+                        }}
+                        onStartPath={(pathId) => {
+                            toast.info(`Starting learning path ${pathId}`);
+                        }}
+                    />
+                );
+            case 'replays':
+                return <VideoReplay />;
+            case 'analytics':
+                if (loadingAnalytics) {
+                    return (
+                        <div className="flex items-center justify-center min-h-[60vh]">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                        </div>
+                    );
+                }
+                return analyticsData ? (
+                    <PerformanceAnalytics analytics={analyticsData} />
+                ) : (
+                    <div className="text-center p-12">
+                        <p className="text-muted-foreground">No analytics data available yet. Start competing to see your stats!</p>
                     </div>
                 );
             case 'profile':
@@ -85,7 +154,7 @@ export default function DashboardPage() {
                 );
             case 'dashboard':
             default:
-                if (['daily', 'workspace', 'leaderboard', 'achievements', 'teams', 'profile'].includes(activeTab)) {
+                if (['daily', 'workspace', 'leaderboard', 'achievements', 'profile', 'replays', 'analytics'].includes(activeTab)) {
                     return null;
                 }
 
@@ -201,7 +270,10 @@ export default function DashboardPage() {
                 username={session.user.username}
                 role={session.user.role}
                 activeTab={activeTab}
-                onTabChange={setActiveTab}
+                onTabChange={(tab) => {
+                    setActiveTab(tab);
+                    setSelectedPracticeQuestion(null);
+                }}
             />
             <main className="flex-1 transition-all duration-300 md:ml-64 p-8">
                 {renderContent()}

@@ -12,7 +12,6 @@ export const competitionTimer = inngest.createFunction(
 
         // End the competition
         await step.run("end-competition", async () => {
-            // Logic to transition competition to 'Completed'
             await prisma.competition.update({
                 where: { id: competitionId },
                 data: {
@@ -20,9 +19,21 @@ export const competitionTimer = inngest.createFunction(
                     endTime: new Date(),
                 },
             });
-            // We could trigger other events here (e.g. notifications)
         });
 
-        return { status: "Competition ended successfully" };
+        // Wait for 12 hours before archiving
+        await step.sleep("wait-before-archive", "12h");
+
+        // Archive the competition
+        await step.run("archive-competition", async () => {
+            await prisma.competition.update({
+                where: { id: competitionId },
+                data: {
+                    status: "Archived" as any,
+                },
+            });
+        });
+
+        return { status: "Competition archived successfully" };
     }
 );

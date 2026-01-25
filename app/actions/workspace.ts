@@ -10,6 +10,22 @@ export async function createWorkspace(data: {
     gitBranch: string;
 }) {
     try {
+        console.log('[WorkspaceAction] Creating workspace:', JSON.stringify(data));
+
+        // Verify user exists to prevent P2003
+        const userExists = await prisma.user.findUnique({
+            where: { id: data.leaderId },
+            select: { id: true }
+        });
+
+        if (!userExists) {
+            console.error(`[WorkspaceAction] Leader ID ${data.leaderId} not found in database.`);
+            return {
+                success: false,
+                error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
         const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
 
         const workspace = await prisma.workspaceGroup.create({

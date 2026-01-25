@@ -14,6 +14,22 @@ export async function submitCode(data: {
     executionTimeMs: number;
 }) {
     try {
+        console.log('[SubmissionAction] Creating submission:', JSON.stringify(data));
+
+        // Verify user exists to prevent P2003
+        const userExists = await prisma.user.findUnique({
+            where: { id: data.userId },
+            select: { id: true }
+        });
+
+        if (!userExists) {
+            console.error(`[SubmissionAction] User ID ${data.userId} not found in database.`);
+            return {
+                success: false,
+                error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
         const submission = await prisma.submission.create({
             data: {
                 userId: data.userId,
