@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 
 interface PracticeModeProps {
   onStartPractice: (questionId: bigint) => void;
-  onStartPath: (pathId: string) => void;
+  onStartPath: (path: any) => void;
 }
 
 export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps) {
@@ -129,7 +129,7 @@ export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps
                       />
                     </div>
                     <Button
-                      onClick={() => onStartPath(path.id)}
+                      onClick={() => onStartPath(path)}
                       variant={path.completed ? 'outline' : 'default'}
                       className={!path.completed ? 'w-full bg-gradient-to-r from-purple-600 to-pink-600' : 'w-full'}
                       size="sm"

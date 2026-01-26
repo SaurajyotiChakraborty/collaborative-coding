@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic'
 import type * as monaco from 'monaco-editor';
-import * as Y from 'yjs';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Lock, LockOpen, Eye, Save, Users } from 'lucide-react';

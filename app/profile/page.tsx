@@ -17,15 +17,7 @@ export default function ProfilePage() {
         }
     }, [status, router]);
 
-    if (status === 'loading') {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600 mx-auto"></div>
-            </div>
-        );
-    }
-
-    if (!session?.user) return null;
+    const user = session?.user;
 
     const handleTabChange = (tab: string) => {
         if (tab === 'profile') return;
@@ -34,15 +26,27 @@ export default function ProfilePage() {
 
     return (
         <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
-            <SideNav
-                username={session.user.username}
-                role={session.user.role}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-            />
-            <main className="flex-1 transition-all duration-300 md:ml-64 p-8">
-                <UserProfile />
-            </main>
+            {status === 'loading' ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600 mx-auto"></div>
+                </div>
+            ) : !user ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <p className="text-muted-foreground">Redirecting to login...</p>
+                </div>
+            ) : (
+                <>
+                    <SideNav
+                        username={user.username}
+                        role={user.role}
+                        activeTab={activeTab}
+                        onTabChange={handleTabChange}
+                    />
+                    <main className="flex-1 transition-all duration-300 md:ml-64 p-8">
+                        <UserProfile />
+                    </main>
+                </>
+            )}
         </div>
     );
 }

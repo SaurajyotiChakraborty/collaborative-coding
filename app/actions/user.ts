@@ -39,11 +39,22 @@ export async function getUser(username: string) {
         const user = await prisma.user.findUnique({
             where: { username },
             include: {
-                achievements: true, // If achievements was a relation, but it's string[]
+                leaderboardEntry: true,
             }
         })
         return { success: true, user }
     } catch (error) {
         return { success: false, error: 'User not found' }
+    }
+}
+export async function getUserAchievements(userId: string) {
+    try {
+        const unlocked = await prisma.userAchievement.findMany({
+            where: { userId },
+            include: { achievement: true }
+        });
+        return { success: true, achievements: unlocked.map(u => u.achievement) };
+    } catch (error) {
+        return { success: false, error: 'Failed to fetch achievements' };
     }
 }

@@ -1,0 +1,378 @@
+{
+  "entries": {
+    "7c46ad8f7a9a": {
+      "type": "content",
+      "sourceText": "Join Optimize Coder",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "7c46ad8f7a9a",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 92,
+        "column": 20
+      }
+    },
+    "6b1cc0391c0d": {
+      "type": "content",
+      "sourceText": "Create your account to start competing",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "6b1cc0391c0d",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 95,
+        "column": 20
+      }
+    },
+    "7eccfa942a4e": {
+      "type": "content",
+      "sourceText": "Username",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "7eccfa942a4e",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 100,
+        "column": 28
+      }
+    },
+    "32ac5df9e514": {
+      "type": "attribute",
+      "sourceText": "Choose a username",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "32ac5df9e514",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 104,
+        "column": 28
+      }
+    },
+    "877907355ae3": {
+      "type": "content",
+      "sourceText": "Email",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "877907355ae3",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 117,
+        "column": 28
+      }
+    },
+    "a28b1042533a": {
+      "type": "attribute",
+      "sourceText": "Enter your email",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "a28b1042533a",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 121,
+        "column": 28
+      }
+    },
+    "b44efdec4990": {
+      "type": "content",
+      "sourceText": "Password",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "b44efdec4990",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 134,
+        "column": 28
+      }
+    },
+    "7807e597ca89": {
+      "type": "attribute",
+      "sourceText": "Create a password (min 6 characters)",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "7807e597ca89",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 139,
+        "column": 32
+      }
+    },
+    "d09d651e5232": {
+      "type": "content",
+      "sourceText": "Confirm Password",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "d09d651e5232",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 160,
+        "column": 28
+      }
+    },
+    "17ad315d4128": {
+      "type": "attribute",
+      "sourceText": "Confirm your password",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "17ad315d4128",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 164,
+        "column": 28
+      }
+    },
+    "4464fc58d805": {
+      "type": "content",
+      "sourceText": "Or continue with",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "4464fc58d805",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 190,
+        "column": 28
+      }
+    },
+    "be74df0c56e9": {
+      "type": "content",
+      "sourceText": "GitHub",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "be74df0c56e9",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 197,
+        "column": 24
+      }
+    },
+    "79850d50d344": {
+      "type": "content",
+      "sourceText": "Google",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "79850d50d344",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 207,
+        "column": 24
+      }
+    },
+    "b06280cb3e37": {
+      "type": "content",
+      "sourceText": "Already have an account?",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "b06280cb3e37",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 220,
+        "column": 24
+      }
+    },
+    "7d8e421ce1c2": {
+      "type": "content",
+      "sourceText": "Sign in here",
+      "context": {
+        "componentName": "RegisterPage",
+        "filePath": "auth/register/page.tsx"
+      },
+      "hash": "7d8e421ce1c2",
+      "location": {
+        "filePath": "auth/register/page.tsx",
+        "line": 221,
+        "column": 24
+      }
+    },
+    "34a6e6cc579e": {
+      "type": "content",
+      "sourceText": "Welcome Back",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "34a6e6cc579e",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 79,
+        "column": 20
+      }
+    },
+    "9a1b05cc9066": {
+      "type": "content",
+      "sourceText": "Sign in to your Optimize Coder account",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "9a1b05cc9066",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 82,
+        "column": 20
+      }
+    },
+    "2b3158b1c26c": {
+      "type": "content",
+      "sourceText": "Email",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "2b3158b1c26c",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 87,
+        "column": 28
+      }
+    },
+    "bdec87a041b3": {
+      "type": "attribute",
+      "sourceText": "Enter your email",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "bdec87a041b3",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 91,
+        "column": 28
+      }
+    },
+    "ca22a08bf390": {
+      "type": "content",
+      "sourceText": "Password",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "ca22a08bf390",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 104,
+        "column": 28
+      }
+    },
+    "0c85dca6de9c": {
+      "type": "attribute",
+      "sourceText": "Enter your password",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "0c85dca6de9c",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 109,
+        "column": 32
+      }
+    },
+    "dd18fdc7b77e": {
+      "type": "content",
+      "sourceText": "Or continue with",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "dd18fdc7b77e",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 143,
+        "column": 28
+      }
+    },
+    "c9eb4859118e": {
+      "type": "content",
+      "sourceText": "GitHub",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "c9eb4859118e",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 150,
+        "column": 24
+      }
+    },
+    "78f9ec87b941": {
+      "type": "content",
+      "sourceText": "Google",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "78f9ec87b941",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 160,
+        "column": 24
+      }
+    },
+    "38dce8b68d63": {
+      "type": "content",
+      "sourceText": "Don't have an account?",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "38dce8b68d63",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 173,
+        "column": 24
+      }
+    },
+    "c7a803c5981a": {
+      "type": "content",
+      "sourceText": "Register here",
+      "context": {
+        "componentName": "SignInPage",
+        "filePath": "auth/signin/page.tsx"
+      },
+      "hash": "c7a803c5981a",
+      "location": {
+        "filePath": "auth/signin/page.tsx",
+        "line": 174,
+        "column": 24
+      }
+    }
+  },
+  "stats": {
+    "totalEntries": 26,
+    "lastUpdated": "2026-01-26T18:15:38.072Z"
+  }
+}

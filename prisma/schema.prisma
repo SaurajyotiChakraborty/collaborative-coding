@@ -64,6 +64,10 @@ model User {
   cheaterRedemptionCount  Int      @default(3)
   createdAt               DateTime @default(now())
 
+  // Dynamic Progress Tracking
+  learningPathProgress    UserLearningPath[]
+  achievementsUnlocked    UserAchievement[]
+
   createdQuestions        Question[]
   createdCompetitions     Competition[]
   participatedCompetitions Competition[] @relation("CompetitionParticipants")
@@ -102,6 +106,9 @@ model Question {
   optimalTimeComplexity String?
   optimalSpaceComplexity String?
   optimalScore          Int? @default(100)
+
+  learningPaths         LearningPath[]     @relation("PathQuestions")
+  dailyChallenges       DailyChallenge[]
 
   @@map("questions")
 }
@@ -266,4 +273,70 @@ model WorkspaceChat {
   timestamp           DateTime        @default(now())
 
   @@map("workspace_chats")
+}
+
+model LearningPath {
+  id                  String           @id @default(uuid())
+  name                String
+  description         String
+  category            String
+  difficulty          String
+  order               Int              @default(0)
+  
+  questions           Question[]       @relation("PathQuestions")
+  userProgress        UserLearningPath[]
+
+  @@map("learning_paths")
+}
+
+model UserLearningPath {
+  id                  String           @id @default(uuid())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  pathId              String
+  path                LearningPath     @relation(fields: [pathId], references: [id])
+  
+  progress            Float            @default(0)
+  completed           Boolean          @default(false)
+  updatedAt           DateTime         @updatedAt
+
+  @@unique([userId, pathId])
+  @@map("user_learning_paths")
+}
+
+model Achievement {
+  id                  String           @id @default(uuid())
+  name                String
+  description         String
+  icon                String
+  requirementType     String           // e.g., 'CompetitionsWon', 'QuestionsSolved'
+  requirementValue    Int
+  xpReward            Int              @default(50)
+  
+  unlockedBy          UserAchievement[]
+
+  @@map("achievements_defs")
+}
+
+model UserAchievement {
+  id                  String           @id @default(uuid())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  achievementId       String
+  achievement         Achievement      @relation(fields: [achievementId], references: [id])
+  
+  unlockedAt          DateTime         @default(now())
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model DailyChallenge {
+  id                  String           @id @default(uuid())
+  date                DateTime         @unique
+  questionId          Int
+  question            Question         @relation(fields: [questionId], references: [id])
+  bonusMultiplier     Float            @default(1.5)
+  
+  @@map("daily_challenges")
 }

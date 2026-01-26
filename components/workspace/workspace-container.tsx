@@ -138,6 +138,7 @@ export const WorkspaceContainer: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [incomingCall, setIncomingCall] = useState<any>(null);
   const [activeCallData, setActiveCallData] = useState<any>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   // File creation states
   const [showNewFileInput, setShowNewFileInput] = useState<{ type: 'file' | 'folder', path: string } | null>(null);
@@ -229,6 +230,16 @@ export const WorkspaceContainer: React.FC = () => {
     }
   }, []);
 
+  const handleChatMessage = useCallback((chat: { userId: string; username: string; message: string; timestamp: number }) => {
+    setMessages(prev => [...prev, {
+      messageId: Date.now(),
+      username: chat.username,
+      message: chat.message,
+      timestamp: new Date(chat.timestamp),
+      isCurrentUser: chat.userId === session?.user?.id
+    }]);
+  }, [session?.user?.id]);
+
   const {
     isConnected: wsConnected,
     acquireFileLock,
@@ -243,7 +254,8 @@ export const WorkspaceContainer: React.FC = () => {
     userId: session?.user?.id || '',
     username: session?.user?.username || '',
     enabled: view === 'workspace' && currentWorkspaceId !== null,
-    onCallEvent: handleCallEvent
+    onCallEvent: handleCallEvent,
+    onChatMessage: handleChatMessage
   });
 
   const handleCreateWorkspace = async (data: WorkspaceCreateData): Promise<void> => {
@@ -332,6 +344,7 @@ export const WorkspaceContainer: React.FC = () => {
 
   const handleOpenWorkspace = (workspaceId: number): void => {
     setCurrentWorkspaceId(workspaceId);
+    setMessages([]); // Clear messages when switching workspace
     setView('workspace');
   };
 
@@ -687,7 +700,7 @@ export const WorkspaceContainer: React.FC = () => {
           </div>
           <div className="flex-1 min-h-0">
             <ChatSidebar
-              messages={currentWorkspace?.chats || []}
+              messages={messages}
               currentUsername={session?.user?.username || ''}
               onSendMessage={handleSendMessage}
               initiateCall={initiateCall}

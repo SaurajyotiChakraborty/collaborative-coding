@@ -1,6 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { inngest } from '@/lib/inngest'
 
 export async function submitCode(data: {
     userId: string;
@@ -41,9 +42,21 @@ export async function submitCode(data: {
                 spaceComplexity: data.spaceComplexity,
                 allTestsPassed: data.allTestsPassed,
                 executionTimeMs: data.executionTimeMs,
-                complexityScore: 0 // logic to calc score
+                complexityScore: 0 // logic to calc score in background
             }
         })
+
+        // Process in background
+        await inngest.send({
+            name: "submission/created",
+            data: {
+                submissionId: submission.id,
+                userId: data.userId,
+                code: data.code,
+                language: data.language
+            }
+        });
+
         return { success: true, submission }
     } catch (error) {
         console.error('Submission failed:', error)

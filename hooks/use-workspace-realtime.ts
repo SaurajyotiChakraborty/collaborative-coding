@@ -11,6 +11,7 @@ interface UseWorkspaceRealtimeProps {
   enabled?: boolean;
   onEvent?: (event: WorkspaceEvent) => void;
   onCallEvent?: (data: { type: string; from: string; username?: string; payload: any }) => void;
+  onChatMessage?: (chat: { userId: string; username: string; message: string; timestamp: number }) => void;
 }
 
 interface UseWorkspaceRealtimeReturn {
@@ -36,6 +37,7 @@ export function useWorkspaceRealtime({
   enabled = true,
   onEvent,
   onCallEvent,
+  onChatMessage,
 }: UseWorkspaceRealtimeProps): UseWorkspaceRealtimeReturn {
   const { db } = useSpacetime();
   const [wsClient, setWsClient] = useState<WorkspaceWebSocketClient | null>(null);
@@ -67,6 +69,13 @@ export function useWorkspaceRealtime({
           onCallEvent?.({ type: 'answer', from: event.userId, payload: event.data.answer });
         } else if (event.type === 'ice_candidate' as any) {
           onCallEvent?.({ type: 'candidate', from: event.userId, payload: event.data.candidate });
+        } else if (event.type === 'chat_message') {
+          onChatMessage?.({
+            userId: event.userId,
+            username: event.username || 'Anonymous',
+            message: event.data.message,
+            timestamp: event.timestamp || Date.now(),
+          });
         } else {
           onEvent?.(event);
         }

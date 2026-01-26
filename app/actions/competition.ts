@@ -170,14 +170,15 @@ export async function startCompetition(competitionId: number) {
             }
         })
 
-        // Schedule auto-end if time limit
+        // Schedule auto-end via Inngest
         if (competition.hasTimeLimit && competition.timeLimitMinutes) {
-            const endTime = new Date(Date.now() + competition.timeLimitMinutes * 60 * 1000)
-
-            // In production, use a job queue like Bull or Agenda
-            setTimeout(async () => {
-                await endCompetition(competitionId)
-            }, competition.timeLimitMinutes * 60 * 1000)
+            await inngest.send({
+                name: "competition/started",
+                data: {
+                    competitionId: competition.id,
+                    durationMinutes: competition.timeLimitMinutes,
+                }
+            });
         }
 
         revalidatePath('/')

@@ -31,6 +31,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { signOut } from 'next-auth/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 
 interface SideNavProps {
   username: string;
@@ -171,8 +172,8 @@ export const SideNav: React.FC<SideNavProps> = ({ username, role, activeTab, onT
             </div>
           </nav>
 
-          {/* Footer Actions */}
           <div className="p-4 border-t border-white/20 space-y-2">
+            <LanguageSwitcher isExpanded={isExpanded} />
             {isExpanded ? (
               <>
                 <ThemeToggle />

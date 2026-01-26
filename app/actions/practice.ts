@@ -7,59 +7,26 @@ export async function getLearningPaths(userId?: string) {
     try {
         // In a real app, these would be in the database
         // For now, let's provide curated paths and calculate progress from user submissions
-        const mockPaths = [
-            {
-                id: 'path-1',
-                name: 'Mastering Arrays',
-                description: 'Core techniques for array manipulation and two-pointer solutions.',
-                category: 'arrays',
-                questions: [1, 2, 3], // Mocked question IDs
-                progress: 0,
-                completed: false,
+        // Fetch dynamic learning paths from DB
+        const paths = await prisma.learningPath.findMany({
+            include: {
+                questions: { select: { id: true } },
+                userProgress: userId ? { where: { userId } } : false
             },
-            {
-                id: 'path-2',
-                name: 'Dynamic Programming Foundations',
-                description: 'Learn the principles of memoization and tabulation.',
-                category: 'dp',
-                questions: [10, 11, 12],
-                progress: 0,
-                completed: false,
-            },
-            {
-                id: 'path-3',
-                name: 'Graph Algorithms',
-                description: 'DFS, BFS and shortest path algorithms.',
-                category: 'graphs',
-                questions: [20, 21, 22],
-                progress: 0,
-                completed: false,
-            }
-        ];
-
-        if (!userId) {
-            return { success: true, learningPaths: mockPaths as any[] };
-        }
-
-        // Calculate real progress
-        const userSubmissions = await prisma.submission.findMany({
-            where: { userId, allTestsPassed: true },
-            select: { questionId: true }
+            orderBy: { order: 'asc' }
         });
 
-        const completedQuestionIds = new Set(userSubmissions.map(s => s.questionId));
-
-        const pathsWithProgress = mockPaths.map(path => {
-            const completedCount = path.questions.filter(id => completedQuestionIds.has(id)).length;
-            const progress = (completedCount / path.questions.length) * 100;
+        const formattedPaths = paths.map(path => {
+            const progressRecord = path.userProgress?.[0];
             return {
                 ...path,
-                progress,
-                completed: progress === 100
+                questions: path.questions.map(q => q.id),
+                progress: progressRecord?.progress || 0,
+                completed: progressRecord?.completed || false
             };
         });
 
-        return { success: true, learningPaths: pathsWithProgress as any[] };
+        return { success: true, learningPaths: formattedPaths as any[] };
     } catch (error) {
         console.error('Failed to fetch learning paths:', error);
         return { success: false, error: 'Internal server error' };

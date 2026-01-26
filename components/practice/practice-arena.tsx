@@ -19,7 +19,9 @@ import {
     ChevronRight,
     MessageCircle,
     BarChart,
-    X
+    X,
+    Terminal,
+    Beaker
 } from 'lucide-react';
 import { getPracticeQuestion } from '@/app/actions/practice';
 import { toast } from 'sonner';
@@ -46,6 +48,9 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [analysis, setAnalysis] = useState<any>(null);
+    const [executing, setExecuting] = useState(false);
+    const [testResults, setTestResults] = useState<any>(null);
+    const [activeResultTab, setActiveResultTab] = useState<string>('problem');
     const [showSolution, setShowSolution] = useState(false);
     const [quote] = useState(() => MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]);
 
@@ -70,6 +75,44 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
         };
         fetchQuestion();
     }, [questionId]);
+
+    const handleRunCode = async () => {
+        if (!question?.testCases) {
+            toast.error('No test cases available for this question');
+            return;
+        }
+
+        setExecuting(true);
+        setActiveResultTab('results');
+        try {
+            const response = await fetch('/api/execute-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code,
+                    language: 'javascript',
+                    testCases: question.testCases
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setTestResults(result);
+                if (result.allPassed) {
+                    toast.success('All test cases passed!');
+                } else {
+                    toast.error(`${result.failedCount} test cases failed`);
+                }
+            } else {
+                toast.error(result.error || 'Execution failed');
+            }
+        } catch (error) {
+            console.error('Run code error:', error);
+            toast.error('Failed to execute code');
+        } finally {
+            setExecuting(false);
+        }
+    };
 
     const handleSubmit = async () => {
         setSubmitting(true);
@@ -163,7 +206,29 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                 <div className="flex items-center gap-3">
                     <Button
                         variant="outline"
-                        onClick={() => setShowSolution(!showSolution)}
+                        onClick={handleRunCode}
+                        disabled={executing || submitting}
+                        className="border-blue-200 dark:border-blue-800 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                        {executing ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                        ) : (
+                            <Beaker className="h-4 w-4 mr-2" />
+                        )}
+                        Run Code
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            const newShow = !showSolution;
+                            setShowSolution(newShow);
+                            if (newShow) {
+                                setActiveResultTab('problem');
+                                if (!question?.canonicalSolution) {
+                                    toast.info('Optimal solution is not available for this challenge yet.');
+                                }
+                            }
+                        }}
                         className="border-purple-200 dark:border-purple-800"
                     >
                         <Lightbulb className="h-4 w-4 mr-2 text-yellow-500" />
@@ -171,7 +236,7 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        disabled={submitting}
+                        disabled={submitting || executing}
                         className="bg-gradient-to-r from-purple-600 to-pink-600 shadow-lg shadow-purple-500/20"
                     >
                         {submitting ? (
@@ -188,11 +253,14 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                 {/* Left Side: Question & Analysis */}
                 <div className="flex flex-col gap-4 overflow-hidden">
                     <Card className="flex-1 overflow-hidden border-white/20 shadow-xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl">
-                        <Tabs defaultValue="problem" className="flex flex-col h-full">
+                        <Tabs value={activeResultTab} onValueChange={setActiveResultTab} className="flex flex-col h-full">
                             <div className="px-4 pt-2 border-b border-white/20">
                                 <TabsList className="bg-transparent gap-2">
                                     <TabsTrigger value="problem" className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/30">
                                         Problem Description
+                                    </TabsTrigger>
+                                    <TabsTrigger value="results" className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/30">
+                                        Test Results
                                     </TabsTrigger>
                                     <TabsTrigger value="analysis" className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/30">
                                         Live Analysis
@@ -229,6 +297,85 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                                             </div>
                                             <div className="mt-2 text-xs text-muted-foreground italic">
                                                 Goal: {question.optimalTimeComplexity} Time | {question.optimalSpaceComplexity} Space
+                                            </div>
+                                        </div>
+                                    )}
+                                </TabsContent>
+
+                                <TabsContent value="results" className="mt-0 space-y-6 px-1 h-full">
+                                    {!testResults ? (
+                                        <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-4">
+                                            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                                                <Beaker className="h-8 w-8 text-blue-600" />
+                                            </div>
+                                            <h3 className="text-xl font-bold">No Results Yet</h3>
+                                            <p className="text-muted-foreground">Click 'Run Code' to see how your solution performs against our test cases.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-6 animate-in slide-in-from-right-4">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <Badge variant={testResults.allPassed ? 'default' : 'destructive'} className={cn(testResults.allPassed && "bg-green-500")}>
+                                                        {testResults.allPassed ? 'Accepted' : 'Failed'}
+                                                    </Badge>
+                                                    <span className="text-sm font-medium">
+                                                        {testResults.passedCount}/{testResults.totalCount} Test Cases Passed
+                                                    </span>
+                                                </div>
+                                                <span className="text-xs text-muted-foreground">
+                                                    Runtime: {testResults.totalTime}ms
+                                                </span>
+                                            </div>
+
+                                            <div className="space-y-4 pb-8">
+                                                {testResults.results.map((result: any, idx: number) => (
+                                                    <Card key={idx} className={cn(
+                                                        "border-l-4 overflow-hidden",
+                                                        result.passed ? "border-l-green-500 bg-green-50/10" : "border-l-red-500 bg-red-50/10"
+                                                    )}>
+                                                        <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-sm">Test Case {idx + 1}</span>
+                                                                {result.passed ? (
+                                                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                                                ) : (
+                                                                    <X className="h-4 w-4 text-red-500" />
+                                                                )}
+                                                            </div>
+                                                            <span className="text-[10px] text-muted-foreground">{result.time}ms</span>
+                                                        </CardHeader>
+                                                        <CardContent className="py-3 px-4 border-t border-white/10 space-y-3">
+                                                            <div className="grid grid-cols-1 gap-2">
+                                                                <div className="space-y-1">
+                                                                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Input</p>
+                                                                    <pre className="p-2 bg-black/20 rounded text-xs font-mono">{JSON.stringify(result.input)}</pre>
+                                                                </div>
+                                                                <div className="grid grid-cols-2 gap-4">
+                                                                    <div className="space-y-1">
+                                                                        <p className="text-[10px] uppercase font-bold text-muted-foreground">Output</p>
+                                                                        <pre className={cn(
+                                                                            "p-2 bg-black/20 rounded text-xs font-mono min-h-[40px] overflow-x-auto",
+                                                                            result.passed ? "text-green-500" : "text-red-500"
+                                                                        )}>
+                                                                            {result.actual || (result.error ? "No output" : "Empty output")}
+                                                                        </pre>
+                                                                    </div>
+                                                                    <div className="space-y-1">
+                                                                        <p className="text-[10px] uppercase font-bold text-muted-foreground">Expected</p>
+                                                                        <pre className="p-2 bg-black/20 rounded text-xs font-mono text-gray-400 min-h-[40px] overflow-x-auto">
+                                                                            {result.expected}
+                                                                        </pre>
+                                                                    </div>
+                                                                </div>
+                                                                {result.error && (
+                                                                    <div className="p-2 bg-red-500/10 rounded border border-red-500/20 text-xs text-red-500 font-mono mt-2">
+                                                                        {result.error}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
                                             </div>
                                         </div>
                                     )}

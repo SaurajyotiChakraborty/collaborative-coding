@@ -1,10 +1,20 @@
 import { serve } from "inngest/next";
 import { inngest } from "@/lib/inngest";
-import { competitionTimer } from "@/inngest/functions";
+import {
+    competitionTimer,
+    processSubmission,
+    recalculateLeaderboard,
+    checkAchievements,
+    scheduleDailyChallenge
+} from "@/inngest/functions";
 
 export const { GET, POST, PUT } = serve({
     client: inngest,
     functions: [
         competitionTimer,
+        processSubmission,
+        recalculateLeaderboard,
+        checkAchievements,
+        scheduleDailyChallenge,
     ],
 });

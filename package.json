@@ -17,6 +17,7 @@
     "@auth/prisma-adapter": "^2.11.1",
     "@base-ui/react": "^1.1.0",
     "@hookform/resolvers": "^5.0.1",
+    "@lingo.dev/compiler": "^0.1.13",
     "@monaco-editor/react": "^4.6.0",
     "@octokit/rest": "21.0.2",
     "@prisma/client": "^5.11.0",

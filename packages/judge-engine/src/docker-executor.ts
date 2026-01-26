@@ -17,6 +17,8 @@ export interface ExecutionConfig {
 export interface ExecutionResult {
     success: boolean;
     allPassed: boolean;
+    passedCount: number;
+    totalCount: number;
     results: Array<{
         passed: boolean;
         input: string;
@@ -83,6 +85,7 @@ export class DockerCodeExecutor {
             }
 
             const allPassed = results.every(r => r.passed);
+            const passedCount = results.filter(r => r.passed).length;
             const avgMemory = totalMemory / results.length;
 
             // Estimate complexity
@@ -91,6 +94,8 @@ export class DockerCodeExecutor {
             return {
                 success: true,
                 allPassed,
+                passedCount,
+                totalCount: results.length,
                 results,
                 totalTime,
                 avgMemory,
@@ -115,8 +120,30 @@ export class DockerCodeExecutor {
         const fileName = `solution.${langConfig.extension}`;
         const filePath = join(workDir, fileName);
 
+        // For JavaScript, wrap the code to automatically call the function with input
+        let finalCode = config.code;
+        if (config.language === 'javascript') {
+            // Simple heuristic to find the primary function name (e.g., "function twoSum")
+            const funcMatch = config.code.match(/function\s+([a-zA-Z0-9_]+)/);
+            if (funcMatch) {
+                const funcName = funcMatch[1];
+                finalCode = `
+${config.code}
+// Driver code
+try {
+    const input = [${testCase.input}];
+    const result = ${funcName}(...input);
+    process.stdout.write(JSON.stringify(result));
+} catch (e) {
+    process.stderr.write(e.message);
+    process.exit(1);
+}
+                `;
+            }
+        }
+
         // Write code to file
-        await writeFile(filePath, config.code);
+        await writeFile(filePath, finalCode);
 
         const startTime = Date.now();
 
@@ -194,7 +221,7 @@ export class DockerCodeExecutor {
             AttachStderr: true,
             OpenStdin: true,
             StdinOnce: true,
-            Tty: false,
+            Tty: true,
         });
 
         await container.start();

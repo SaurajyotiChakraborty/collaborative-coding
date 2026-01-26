@@ -25,14 +25,7 @@ interface NavItem {
     adminOnly?: boolean;
 }
 
-const navItems: NavItem[] = [
-    { name: 'Dashboard', href: '/dashboard', icon: <Home className="h-4 w-4" /> },
-    { name: 'Compete', href: '/compete', icon: <Code2 className="h-4 w-4" /> },
-    { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="h-4 w-4" /> },
-    { name: 'Workspace', href: '/workspace', icon: <Users className="h-4 w-4" /> },
-    { name: 'Profile', href: '/profile', icon: <User className="h-4 w-4" /> },
-    { name: 'Admin', href: '/admin', icon: <Shield className="h-4 w-4" />, adminOnly: true },
-];
+const navItems: NavItem[] = [];
 
 export function MainNav() {
     const pathname = usePathname();
