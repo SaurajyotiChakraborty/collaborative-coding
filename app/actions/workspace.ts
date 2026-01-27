@@ -2,6 +2,60 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { GitOperations } from '@/lib/git-operations'
+
+export async function pushToGit(workspaceId: number, commitMessage: string) {
+    try {
+        const workspace = await prisma.workspaceGroup.findUnique({
+            where: { id: workspaceId },
+            include: { leader: true }
+        });
+
+        if (!workspace) return { success: false, error: 'Workspace not found' };
+
+        const git = new GitOperations();
+        const result = await git.pushToRepository(
+            {
+                repoUrl: workspace.gitRepoUrl,
+                branch: workspace.gitBranch,
+                workspaceId: workspaceId.toString(),
+            },
+            commitMessage,
+            workspace.cloudStoragePath
+        );
+
+        return result;
+    } catch (error) {
+        console.error('Git push error:', error);
+        return { success: false, error: 'Failed to push to Git' };
+    }
+}
+
+export async function pullFromGit(workspaceId: number) {
+    try {
+        const workspace = await prisma.workspaceGroup.findUnique({
+            where: { id: workspaceId }
+        });
+
+        if (!workspace) return { success: false, error: 'Workspace not found' };
+
+        const git = new GitOperations();
+        const result = await git.pullFromRepository({
+            repoUrl: workspace.gitRepoUrl,
+            branch: workspace.gitBranch,
+            workspaceId: workspaceId.toString()
+        });
+
+        if (result.success) {
+            revalidatePath('/workspace');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Git pull error:', error);
+        return { success: false, error: 'Failed to pull from Git' };
+    }
+}
 
 export async function createWorkspace(data: {
     name: string;
@@ -15,7 +69,7 @@ export async function createWorkspace(data: {
         // Verify user exists to prevent P2003
         const userExists = await prisma.user.findUnique({
             where: { id: data.leaderId },
-            select: { id: true }
+            select: { id: true, isCheater: true }
         });
 
         if (!userExists) {
@@ -23,6 +77,13 @@ export async function createWorkspace(data: {
             return {
                 success: false,
                 error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
+        if (userExists.isCheater) {
+            return {
+                success: false,
+                error: 'Your account is restricted from creating workspaces.'
             };
         }
 
@@ -68,6 +129,15 @@ export async function joinWorkspace(inviteCode: string, userId: string, gitUsern
 
         if (!workspace) {
             return { success: false, error: 'Invalid invite code' }
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { isCheater: true }
+        });
+
+        if (user?.isCheater) {
+            return { success: false, error: 'Your account is restricted from joining workspaces.' };
         }
 
         if (workspace.status !== 'Active') {
@@ -209,5 +279,86 @@ export async function getMyWorkspaces(userId: string) {
     } catch (error) {
         console.error('Failed to fetch workspaces:', error);
         return { success: false, error: 'Failed to fetch workspaces' };
+    }
+}
+
+export async function sendWorkspaceMessage(workspaceId: number, userId: string, username: string, message: string) {
+    try {
+        const chat = await prisma.workspaceChat.create({
+            data: {
+                workspaceId,
+                userId,
+                username,
+                message,
+                timestamp: new Date()
+            }
+        });
+
+        return { success: true, chat };
+    } catch (error) {
+        console.error('Failed to save message:', error);
+        return { success: false, error: 'Failed to save message' };
+    }
+}
+
+export async function lockWorkspaceFile(workspaceId: number, filePath: string, userId: string) {
+    try {
+        const existingLock = await prisma.fileLock.findFirst({
+            where: {
+                workspaceId,
+                filePath,
+                NOT: { lockedById: userId }
+            }
+        });
+
+        if (existingLock) {
+            return { success: false, error: 'File is already locked by another user' };
+        }
+
+        // We need a unique constraint or use upsert with specific fields
+        // Since schema doesn't have a unique constraint on workspaceId_filePath for FileLock yet (only workspace_files)
+        // I'll check and then create/update.
+        const myLock = await prisma.fileLock.findFirst({
+            where: { workspaceId, filePath, lockedById: userId }
+        });
+
+        if (myLock) {
+            await prisma.fileLock.update({
+                where: { id: myLock.id },
+                data: { lastActivity: new Date() }
+            });
+            return { success: true, lock: myLock };
+        }
+
+        const lock = await prisma.fileLock.create({
+            data: {
+                workspaceId,
+                filePath,
+                lockedById: userId,
+                lastActivity: new Date()
+            }
+        });
+
+        return { success: true, lock };
+    } catch (error) {
+        console.error('Failed to lock file:', error);
+        return { success: false, error: 'Failed to lock file' };
+    }
+}
+
+export async function unlockWorkspaceFile(workspaceId: number, filePath: string, userId: string) {
+    try {
+        await prisma.fileLock.deleteMany({
+            where: {
+                workspaceId,
+                filePath,
+                lockedById: userId
+            }
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error('Failed to unlock file:', error);
+        return { success: false, error: 'Failed to unlock file' };
     }
 }

@@ -1,378 +1,1598 @@
 {
   "entries": {
-    "7c46ad8f7a9a": {
+    "759ce9eb6256": {
       "type": "content",
-      "sourceText": "Join Optimize Coder",
+      "sourceText": "Admin Dashboard",
       "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
       },
-      "hash": "7c46ad8f7a9a",
+      "hash": "759ce9eb6256",
       "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 92,
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 25,
         "column": 20
       }
     },
-    "6b1cc0391c0d": {
+    "3c108496916d": {
       "type": "content",
-      "sourceText": "Create your account to start competing",
+      "sourceText": "Manage users, questions, and competitions",
       "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
       },
-      "hash": "6b1cc0391c0d",
+      "hash": "3c108496916d",
       "location": {
-        "filePath": "auth/register/page.tsx",
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 28,
+        "column": 20
+      }
+    },
+    "63acbefbed74": {
+      "type": "content",
+      "sourceText": "Admin Mode",
+      "context": {
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
+      },
+      "hash": "63acbefbed74",
+      "location": {
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 32,
+        "column": 20
+      }
+    },
+    "d11be2f86129": {
+      "type": "content",
+      "sourceText": "Overview",
+      "context": {
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
+      },
+      "hash": "d11be2f86129",
+      "location": {
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 39,
+        "column": 20
+      }
+    },
+    "6866abb18af3": {
+      "type": "content",
+      "sourceText": "Users",
+      "context": {
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
+      },
+      "hash": "6866abb18af3",
+      "location": {
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 43,
+        "column": 20
+      }
+    },
+    "0a9fa6b5c41b": {
+      "type": "content",
+      "sourceText": "Questions",
+      "context": {
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
+      },
+      "hash": "0a9fa6b5c41b",
+      "location": {
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 47,
+        "column": 20
+      }
+    },
+    "874da298e8ef": {
+      "type": "content",
+      "sourceText": "Competitions",
+      "context": {
+        "componentName": "AdminPanel",
+        "filePath": "../components/admin/admin-panel.tsx"
+      },
+      "hash": "874da298e8ef",
+      "location": {
+        "filePath": "../components/admin/admin-panel.tsx",
+        "line": 51,
+        "column": 20
+      }
+    },
+    "8cf20303f384": {
+      "type": "content",
+      "sourceText": "All Questions",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "8cf20303f384",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 269,
+        "column": 10
+      }
+    },
+    "98ed07722854": {
+      "type": "content",
+      "sourceText": "<CheckCircle0></CheckCircle0> Approval Queue {expression0}",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "98ed07722854",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 273,
+        "column": 10
+      }
+    },
+    "1a1b01e16e6b": {
+      "type": "content",
+      "sourceText": "AI Studio",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "1a1b01e16e6b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 282,
+        "column": 10
+      }
+    },
+    "c1b14dc08e80": {
+      "type": "content",
+      "sourceText": "Master Question List",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "c1b14dc08e80",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 297,
+        "column": 18
+      }
+    },
+    "7f75cf2476d9": {
+      "type": "content",
+      "sourceText": "View, edit or delete all platform challenges",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "7f75cf2476d9",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 298,
+        "column": 18
+      }
+    },
+    "024cb2fb20f9": {
+      "type": "attribute",
+      "sourceText": "Search questions...",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "024cb2fb20f9",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 303,
+        "column": 20
+      }
+    },
+    "fedb610deb05": {
+      "type": "content",
+      "sourceText": "Title",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "fedb610deb05",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 315,
+        "column": 20
+      }
+    },
+    "1e5dacc45042": {
+      "type": "content",
+      "sourceText": "Difficulty",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "1e5dacc45042",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 520,
+        "column": 18
+      }
+    },
+    "dbbf3b896a8b": {
+      "type": "content",
+      "sourceText": "Status",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "dbbf3b896a8b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 317,
+        "column": 20
+      }
+    },
+    "de2f6cd6648a": {
+      "type": "content",
+      "sourceText": "Created",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "de2f6cd6648a",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 318,
+        "column": 20
+      }
+    },
+    "160b04056d34": {
+      "type": "content",
+      "sourceText": "Actions",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "160b04056d34",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 319,
+        "column": 20
+      }
+    },
+    "b25d992e061c": {
+      "type": "content",
+      "sourceText": "Fetching questions...",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "b25d992e061c",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 327,
+        "column": 24
+      }
+    },
+    "32565cf26eae": {
+      "type": "content",
+      "sourceText": "No questions found.",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "32565cf26eae",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 332,
+        "column": 22
+      }
+    },
+    "96d27705c9cb": {
+      "type": "content",
+      "sourceText": "Approval Queue",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "96d27705c9cb",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 386,
+        "column": 14
+      }
+    },
+    "3b763b8c2474": {
+      "type": "content",
+      "sourceText": "Review AI-generated questions before they go live",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "3b763b8c2474",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 387,
+        "column": 14
+      }
+    },
+    "24dcd99924c4": {
+      "type": "content",
+      "sourceText": "Queue Empty",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "24dcd99924c4",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 393,
+        "column": 18
+      }
+    },
+    "08ca72987988": {
+      "type": "content",
+      "sourceText": "All AI questions have been processed.",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "08ca72987988",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 394,
+        "column": 18
+      }
+    },
+    "4b3620273ada": {
+      "type": "content",
+      "sourceText": "AI Content Studio",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "4b3620273ada",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 436,
+        "column": 14
+      }
+    },
+    "f8e3b8292da1": {
+      "type": "content",
+      "sourceText": "Describe a concept and AI will draft a complete challenge including test cases and optimal solution.",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "f8e3b8292da1",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 440,
+        "column": 14
+      }
+    },
+    "e9922448a72b": {
+      "type": "content",
+      "sourceText": "What's the challenge about?",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "e9922448a72b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 445,
+        "column": 18
+      }
+    },
+    "e62907bdb325": {
+      "type": "attribute",
+      "sourceText": "E.g., Create a hard dynamic programming problem about finding the longest path in a grid with specific obstacles and collectable items...",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "e62907bdb325",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 446,
+        "column": 18
+      }
+    },
+    "96863e8ea67d": {
+      "type": "content",
+      "sourceText": "Difficulty Bias",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "96863e8ea67d",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 458,
+        "column": 20
+      }
+    },
+    "771ca05183e3": {
+      "type": "content",
+      "sourceText": "Easy",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "771ca05183e3",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 526,
+        "column": 22
+      }
+    },
+    "ac6184618636": {
+      "type": "content",
+      "sourceText": "Medium",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "ac6184618636",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 527,
+        "column": 22
+      }
+    },
+    "45e87615a479": {
+      "type": "content",
+      "sourceText": "Hard",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "45e87615a479",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 528,
+        "column": 22
+      }
+    },
+    "69a197ecad27": {
+      "type": "content",
+      "sourceText": "Manifesting Challenge...",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "69a197ecad27",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 478,
+        "column": 20
+      }
+    },
+    "fd2664d6a33e": {
+      "type": "content",
+      "sourceText": "Draft Challenge with Magic",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "fd2664d6a33e",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 483,
+        "column": 20
+      }
+    },
+    "f4bb02c9bd6b": {
+      "type": "content",
+      "sourceText": "Clear Form",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "f4bb02c9bd6b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 507,
+        "column": 16
+      }
+    },
+    "d21928b4b4e3": {
+      "type": "content",
+      "sourceText": "Challenge Title",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "d21928b4b4e3",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 516,
+        "column": 18
+      }
+    },
+    "dd43fb251e4f": {
+      "type": "attribute",
+      "sourceText": "Two Sum",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "dd43fb251e4f",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 517,
+        "column": 18
+      }
+    },
+    "45d728ad5fb7": {
+      "type": "content",
+      "sourceText": "Detailed Description (Markdown)",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "45d728ad5fb7",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 535,
+        "column": 16
+      }
+    },
+    "24acc37b6c6d": {
+      "type": "content",
+      "sourceText": "Test Optimization",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "24acc37b6c6d",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 543,
+        "column": 20
+      }
+    },
+    "31a117f1e102": {
+      "type": "content",
+      "sourceText": "Canonical Solution (Python/JS)",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "31a117f1e102",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 546,
+        "column": 24
+      }
+    },
+    "2e9614ad0600": {
+      "type": "attribute",
+      "sourceText": "Reference code to compare against...",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "2e9614ad0600",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 547,
+        "column": 24
+      }
+    },
+    "a65459802dd8": {
+      "type": "content",
+      "sourceText": "Optimal Time",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "a65459802dd8",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 557,
+        "column": 26
+      }
+    },
+    "3022a63532d3": {
+      "type": "attribute",
+      "sourceText": "O(n log n)",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "3022a63532d3",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 558,
+        "column": 26
+      }
+    },
+    "a3022718a63b": {
+      "type": "content",
+      "sourceText": "Optimal Space",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "a3022718a63b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 561,
+        "column": 26
+      }
+    },
+    "fb2710071d64": {
+      "type": "attribute",
+      "sourceText": "O(n)",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "fb2710071d64",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 562,
+        "column": 26
+      }
+    },
+    "e24ada05e2d8": {
+      "type": "content",
+      "sourceText": "Constraints",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "e24ada05e2d8",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 569,
+        "column": 20
+      }
+    },
+    "50933cadb328": {
+      "type": "attribute",
+      "sourceText": "e.g., 1 <= n <= 10^5",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "50933cadb328",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 570,
+        "column": 20
+      }
+    },
+    "714d1cec21ab": {
+      "type": "content",
+      "sourceText": "Tags",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "714d1cec21ab",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 574,
+        "column": 20
+      }
+    },
+    "b66c9ee9eb84": {
+      "type": "attribute",
+      "sourceText": "arrays, math, greedy",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "b66c9ee9eb84",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 575,
+        "column": 20
+      }
+    },
+    "7c65bd63030b": {
+      "type": "content",
+      "sourceText": "Validation Test Cases",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "7c65bd63030b",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 581,
+        "column": 20
+      }
+    },
+    "460fcaf1fe91": {
+      "type": "content",
+      "sourceText": "Add Case",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "460fcaf1fe91",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 582,
+        "column": 20
+      }
+    },
+    "796f692c07e1": {
+      "type": "content",
+      "sourceText": "Verify with AI",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "796f692c07e1",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 631,
+        "column": 78
+      }
+    },
+    "00b5d66b052a": {
+      "type": "content",
+      "sourceText": "Save Changes",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "00b5d66b052a",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 640,
+        "column": 20
+      }
+    },
+    "6a5b278bc703": {
+      "type": "content",
+      "sourceText": "Publish Challenge",
+      "context": {
+        "componentName": "QuestionManager",
+        "filePath": "../components/admin/question-manager.tsx"
+      },
+      "hash": "6a5b278bc703",
+      "location": {
+        "filePath": "../components/admin/question-manager.tsx",
+        "line": 642,
+        "column": 20
+      }
+    },
+    "415eb71b1639": {
+      "type": "content",
+      "sourceText": "Achievements",
+      "context": {
+        "componentName": "AchievementsContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "415eb71b1639",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 29,
+        "column": 8
+      }
+    },
+    "2284adf62024": {
+      "type": "content",
+      "sourceText": "No analytics data available yet. Start competing to see your stats!",
+      "context": {
+        "componentName": "AnalyticsContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "2284adf62024",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 58,
+        "column": 12
+      }
+    },
+    "e8b5bdc9f5aa": {
+      "type": "content",
+      "sourceText": "Welcome back, {expression0}!",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "e8b5bdc9f5aa",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 72,
+        "column": 12
+      }
+    },
+    "f0ba2ca11af1": {
+      "type": "content",
+      "sourceText": "Ready to compete and improve your coding skills?",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "f0ba2ca11af1",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 75,
+        "column": 12
+      }
+    },
+    "3053169d14ae": {
+      "type": "content",
+      "sourceText": "Rating",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "3053169d14ae",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 81,
+        "column": 20
+      }
+    },
+    "2ec6208b89c8": {
+      "type": "content",
+      "sourceText": "Your competitive rank",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "2ec6208b89c8",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 86,
+        "column": 20
+      }
+    },
+    "1781643f31bf": {
+      "type": "content",
+      "sourceText": "Experience",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "1781643f31bf",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 91,
+        "column": 20
+      }
+    },
+    "95571da45569": {
+      "type": "content",
+      "sourceText": "{expression0} XP",
+      "context": {
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "95571da45569",
+      "location": {
+        "filePath": "dashboard/page.tsx",
         "line": 95,
         "column": 20
       }
     },
-    "7eccfa942a4e": {
+    "10f4c3188bfd": {
       "type": "content",
-      "sourceText": "Username",
+      "sourceText": "Total platform XP",
       "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "7eccfa942a4e",
+      "hash": "10f4c3188bfd",
       "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 100,
-        "column": 28
-      }
-    },
-    "32ac5df9e514": {
-      "type": "attribute",
-      "sourceText": "Choose a username",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "32ac5df9e514",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 104,
-        "column": 28
-      }
-    },
-    "877907355ae3": {
-      "type": "content",
-      "sourceText": "Email",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "877907355ae3",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 117,
-        "column": 28
-      }
-    },
-    "a28b1042533a": {
-      "type": "attribute",
-      "sourceText": "Enter your email",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "a28b1042533a",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 121,
-        "column": 28
-      }
-    },
-    "b44efdec4990": {
-      "type": "content",
-      "sourceText": "Password",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "b44efdec4990",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 134,
-        "column": 28
-      }
-    },
-    "7807e597ca89": {
-      "type": "attribute",
-      "sourceText": "Create a password (min 6 characters)",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "7807e597ca89",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 139,
-        "column": 32
-      }
-    },
-    "d09d651e5232": {
-      "type": "content",
-      "sourceText": "Confirm Password",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "d09d651e5232",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 160,
-        "column": 28
-      }
-    },
-    "17ad315d4128": {
-      "type": "attribute",
-      "sourceText": "Confirm your password",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "17ad315d4128",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 164,
-        "column": 28
-      }
-    },
-    "4464fc58d805": {
-      "type": "content",
-      "sourceText": "Or continue with",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "4464fc58d805",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 190,
-        "column": 28
-      }
-    },
-    "be74df0c56e9": {
-      "type": "content",
-      "sourceText": "GitHub",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "be74df0c56e9",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 197,
-        "column": 24
-      }
-    },
-    "79850d50d344": {
-      "type": "content",
-      "sourceText": "Google",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "79850d50d344",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 207,
-        "column": 24
-      }
-    },
-    "b06280cb3e37": {
-      "type": "content",
-      "sourceText": "Already have an account?",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "b06280cb3e37",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 220,
-        "column": 24
-      }
-    },
-    "7d8e421ce1c2": {
-      "type": "content",
-      "sourceText": "Sign in here",
-      "context": {
-        "componentName": "RegisterPage",
-        "filePath": "auth/register/page.tsx"
-      },
-      "hash": "7d8e421ce1c2",
-      "location": {
-        "filePath": "auth/register/page.tsx",
-        "line": 221,
-        "column": 24
-      }
-    },
-    "34a6e6cc579e": {
-      "type": "content",
-      "sourceText": "Welcome Back",
-      "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
-      },
-      "hash": "34a6e6cc579e",
-      "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 79,
+        "filePath": "dashboard/page.tsx",
+        "line": 96,
         "column": 20
       }
     },
-    "9a1b05cc9066": {
+    "2360e69cd41d": {
       "type": "content",
-      "sourceText": "Sign in to your Optimize Coder account",
+      "sourceText": "Role",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "9a1b05cc9066",
+      "hash": "2360e69cd41d",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 82,
+        "filePath": "dashboard/page.tsx",
+        "line": 101,
         "column": 20
       }
     },
-    "2b3158b1c26c": {
+    "71e364df1f3c": {
       "type": "content",
-      "sourceText": "Email",
+      "sourceText": "Account privilege level",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "WelcomeContent",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "2b3158b1c26c",
+      "hash": "71e364df1f3c",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 87,
-        "column": 28
+        "filePath": "dashboard/page.tsx",
+        "line": 108,
+        "column": 20
       }
     },
-    "bdec87a041b3": {
-      "type": "attribute",
-      "sourceText": "Enter your email",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
-      },
-      "hash": "bdec87a041b3",
-      "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 91,
-        "column": 28
-      }
-    },
-    "ca22a08bf390": {
+    "f300c5f177c9": {
       "type": "content",
-      "sourceText": "Password",
+      "sourceText": "This feature is currently under high-priority development. Stay tuned for updates!",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "ca22a08bf390",
+      "hash": "f300c5f177c9",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 104,
-        "column": 28
+        "filePath": "dashboard/page.tsx",
+        "line": 148,
+        "column": 8
       }
     },
-    "0c85dca6de9c": {
-      "type": "attribute",
-      "sourceText": "Enter your password",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
-      },
-      "hash": "0c85dca6de9c",
-      "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 109,
-        "column": 32
-      }
-    },
-    "dd18fdc7b77e": {
+    "0e6e819e587b": {
       "type": "content",
-      "sourceText": "Or continue with",
+      "sourceText": "Next Level Coding",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "dd18fdc7b77e",
+      "hash": "0e6e819e587b",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 143,
-        "column": 28
+        "filePath": "dashboard/page.tsx",
+        "line": 154,
+        "column": 16
       }
     },
-    "c9eb4859118e": {
+    "22082231edae": {
       "type": "content",
-      "sourceText": "GitHub",
+      "sourceText": "Advanced algorithms coming soon",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "c9eb4859118e",
+      "hash": "22082231edae",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 150,
-        "column": 24
+        "filePath": "dashboard/page.tsx",
+        "line": 155,
+        "column": 16
       }
     },
-    "78f9ec87b941": {
+    "bc5c0920f5c9": {
       "type": "content",
-      "sourceText": "Google",
+      "sourceText": "Exclusive Rewards",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
       },
-      "hash": "78f9ec87b941",
+      "hash": "bc5c0920f5c9",
       "location": {
-        "filePath": "auth/signin/page.tsx",
+        "filePath": "dashboard/page.tsx",
+        "line": 159,
+        "column": 16
+      }
+    },
+    "f548787e9203": {
+      "type": "content",
+      "sourceText": "Earn tokens and custom themes",
+      "context": {
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "f548787e9203",
+      "location": {
+        "filePath": "dashboard/page.tsx",
         "line": 160,
+        "column": 16
+      }
+    },
+    "efd6b076cedc": {
+      "type": "content",
+      "sourceText": "Back to Dashboard",
+      "context": {
+        "componentName": "FeaturePlaceholder",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "efd6b076cedc",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 163,
+        "column": 8
+      }
+    },
+    "ee7a58e3ea04": {
+      "type": "content",
+      "sourceText": "Redirecting to login...",
+      "context": {
+        "componentName": "DashboardPage",
+        "filePath": "dashboard/page.tsx"
+      },
+      "hash": "ee7a58e3ea04",
+      "location": {
+        "filePath": "dashboard/page.tsx",
+        "line": 283,
+        "column": 20
+      }
+    },
+    "bc22d590b038": {
+      "type": "content",
+      "sourceText": "Access Restrained",
+      "context": {
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
+      },
+      "hash": "bc22d590b038",
+      "location": {
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 16,
         "column": 24
       }
     },
-    "38dce8b68d63": {
+    "50dd461320c8": {
       "type": "content",
-      "sourceText": "Don't have an account?",
+      "sourceText": "Your account has been flagged for violation of platform terms.",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
       },
-      "hash": "38dce8b68d63",
+      "hash": "50dd461320c8",
       "location": {
-        "filePath": "auth/signin/page.tsx",
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 17,
+        "column": 24
+      }
+    },
+    "26c0fc4b384b": {
+      "type": "content",
+      "sourceText": "Participation in challenges, competitions, and collaborative workspaces is currently restricted for your account.",
+      "context": {
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
+      },
+      "hash": "26c0fc4b384b",
+      "location": {
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 24,
+        "column": 24
+      }
+    },
+    "3bd89335d17f": {
+      "type": "content",
+      "sourceText": "Home",
+      "context": {
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
+      },
+      "hash": "3bd89335d17f",
+      "location": {
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 31,
+        "column": 28
+      }
+    },
+    "70c2dee4d121": {
+      "type": "content",
+      "sourceText": "Appeal Ban",
+      "context": {
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
+      },
+      "hash": "70c2dee4d121",
+      "location": {
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 36,
+        "column": 24
+      }
+    },
+    "56f5442577a7": {
+      "type": "content",
+      "sourceText": "If you believe this is a mistake, please contact our moderation team with your User ID.",
+      "context": {
+        "componentName": "BannedView",
+        "filePath": "../components/shared/banned-view.tsx"
+      },
+      "hash": "56f5442577a7",
+      "location": {
+        "filePath": "../components/shared/banned-view.tsx",
+        "line": 42,
+        "column": 20
+      }
+    },
+    "53221ad9b393": {
+      "type": "content",
+      "sourceText": "Question Not Found",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "53221ad9b393",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 170,
+        "column": 20
+      }
+    },
+    "ea521e09e23f": {
+      "type": "content",
+      "sourceText": "The practice challenge you're looking for could not be loaded. It might have been removed or moved.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "ea521e09e23f",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 171,
+        "column": 20
+      }
+    },
+    "f7111a67f9de": {
+      "type": "content",
+      "sourceText": "Back to Selection",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "f7111a67f9de",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
         "line": 173,
         "column": 24
       }
     },
-    "c7a803c5981a": {
+    "508ee245d941": {
       "type": "content",
-      "sourceText": "Register here",
+      "sourceText": "Try running the optimal seed script if you're an admin.",
       "context": {
-        "componentName": "SignInPage",
-        "filePath": "auth/signin/page.tsx"
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
       },
-      "hash": "c7a803c5981a",
+      "hash": "508ee245d941",
       "location": {
-        "filePath": "auth/signin/page.tsx",
-        "line": 174,
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 176,
         "column": 24
+      }
+    },
+    "736e713629e7": {
+      "type": "content",
+      "sourceText": "Optimization Challenge",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "736e713629e7",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 201,
+        "column": 24
+      }
+    },
+    "4ab8afc0d5cf": {
+      "type": "content",
+      "sourceText": "{expression0} Run Code",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "4ab8afc0d5cf",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 208,
+        "column": 20
+      }
+    },
+    "8bf741f65fac": {
+      "type": "content",
+      "sourceText": "{expression0} Run Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8bf741f65fac",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 238,
+        "column": 20
+      }
+    },
+    "cdfc40b3cc7f": {
+      "type": "content",
+      "sourceText": "Problem Description",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "cdfc40b3cc7f",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 260,
+        "column": 36
+      }
+    },
+    "453598af04a0": {
+      "type": "content",
+      "sourceText": "Test Results",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "453598af04a0",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 263,
+        "column": 36
+      }
+    },
+    "b9db963129b6": {
+      "type": "content",
+      "sourceText": "Live Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "b9db963129b6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 266,
+        "column": 36
+      }
+    },
+    "78196d715397": {
+      "type": "content",
+      "sourceText": "The Task",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "78196d715397",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 275,
+        "column": 40
+      }
+    },
+    "8d2b7ce0737a": {
+      "type": "content",
+      "sourceText": "Constraints",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8d2b7ce0737a",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 282,
+        "column": 40
+      }
+    },
+    "976247e027e9": {
+      "type": "content",
+      "sourceText": "The Optimal Approach",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "976247e027e9",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 292,
+        "column": 44
+      }
+    },
+    "516c2d10e267": {
+      "type": "content",
+      "sourceText": "Goal: {expression0} Time | {expression1} Space",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "516c2d10e267",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 301,
+        "column": 52
+      }
+    },
+    "73df1136f267": {
+      "type": "content",
+      "sourceText": "No Results Yet",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "73df1136f267",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 324,
+        "column": 44
+      }
+    },
+    "5358746da65d": {
+      "type": "content",
+      "sourceText": "Click 'Run Code' to see how your solution performs against our test cases.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "5358746da65d",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 325,
+        "column": 44
+      }
+    },
+    "15f7fefc701e": {
+      "type": "content",
+      "sourceText": "{expression0}/{expression1} Test Cases Passed",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "15f7fefc701e",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 334,
+        "column": 52
+      }
+    },
+    "8543db58742f": {
+      "type": "content",
+      "sourceText": "Runtime: {expression0}ms",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8543db58742f",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 338,
+        "column": 48
+      }
+    },
+    "37ebd9e49baa": {
+      "type": "content",
+      "sourceText": "Ready for Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "37ebd9e49baa",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 403,
+        "column": 44
+      }
+    },
+    "3df78cd7ef04": {
+      "type": "content",
+      "sourceText": "Write your code and click 'Run Analysis' to see your performance metrics and comparisons.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "3df78cd7ef04",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 404,
+        "column": 44
+      }
+    },
+    "95f9bafaedde": {
+      "type": "content",
+      "sourceText": "Your Complexity",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "95f9bafaedde",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 412,
+        "column": 56
+      }
+    },
+    "6f88f67d9551": {
+      "type": "content",
+      "sourceText": "Optimal Goal",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "6f88f67d9551",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 426,
+        "column": 56
+      }
+    },
+    "1a19107ff380": {
+      "type": "content",
+      "sourceText": "ABSOLUTE PERFECTION!",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "1a19107ff380",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 442,
+        "column": 52
+      }
+    },
+    "d19a0d0c2537": {
+      "type": "content",
+      "sourceText": "\"{quote}\"",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "d19a0d0c2537",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 443,
+        "column": 52
+      }
+    },
+    "bb7ba28b34b3": {
+      "type": "content",
+      "sourceText": "Master Optimizer",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "bb7ba28b34b3",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 447,
+        "column": 56
+      }
+    },
+    "77b402463ab6": {
+      "type": "content",
+      "sourceText": "+250 XP earned",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "77b402463ab6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 448,
+        "column": 56
+      }
+    },
+    "f4ea63d493ad": {
+      "type": "content",
+      "sourceText": "Optimization Tip",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "f4ea63d493ad",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 453,
+        "column": 52
+      }
+    },
+    "8c64d8529dd1": {
+      "type": "content",
+      "sourceText": "Your code is correct, but there's a more efficient way to handle this! Try focusing on reducing nested loops or using a more spatial data structure.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8c64d8529dd1",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 457,
+        "column": 52
+      }
+    },
+    "4051918076ee": {
+      "type": "content",
+      "sourceText": "Complexity Score",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "4051918076ee",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 465,
+        "column": 52
+      }
+    },
+    "5202046f8d13": {
+      "type": "content",
+      "sourceText": "Lines Used",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "5202046f8d13",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 469,
+        "column": 52
+      }
+    },
+    "bc30286cd73c": {
+      "type": "content",
+      "sourceText": "Rank",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "bc30286cd73c",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 473,
+        "column": 52
+      }
+    },
+    "9a213a95ee1c": {
+      "type": "content",
+      "sourceText": "Top 5%",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "9a213a95ee1c",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 474,
+        "column": 52
+      }
+    },
+    "87bfb4e3adfb": {
+      "type": "content",
+      "sourceText": "TypeScript Editor",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "87bfb4e3adfb",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 494,
+        "column": 28
+      }
+    },
+    "560233041ad6": {
+      "type": "content",
+      "sourceText": "Auto-saved",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "560233041ad6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 496,
+        "column": 24
+      }
+    },
+    "8c34fda3cf18": {
+      "type": "content",
+      "sourceText": "The optimal solution for this challenge hasn't been verified by our AI architects yet. Check back soon or try to find it yourself!",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8c34fda3cf18",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 308,
+        "column": 52
       }
     }
   },
   "stats": {
-    "totalEntries": 26,
-    "lastUpdated": "2026-01-26T18:15:38.072Z"
+    "totalEntries": 113,
+    "lastUpdated": "2026-01-27T09:34:27.222Z"
   }
 }

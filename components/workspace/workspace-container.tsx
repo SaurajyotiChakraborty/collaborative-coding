@@ -121,7 +121,7 @@ const mockMessages: ChatMessage[] = [
 
 import { useSession, signIn } from 'next-auth/react';
 import { cn } from '@/lib/utils';
-import { getWorkspace, createWorkspace, joinWorkspace, getMyWorkspaces, createFile, updateFile, deleteFile } from '@/app/actions/workspace';
+import { getWorkspace, createWorkspace, joinWorkspace, getMyWorkspaces, createFile, updateFile, deleteFile, sendWorkspaceMessage, lockWorkspaceFile, unlockWorkspaceFile } from '@/app/actions/workspace';
 
 export const WorkspaceContainer: React.FC = () => {
   const { data: session, status } = useSession();
@@ -139,6 +139,43 @@ export const WorkspaceContainer: React.FC = () => {
   const [incomingCall, setIncomingCall] = useState<any>(null);
   const [activeCallData, setActiveCallData] = useState<any>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  // Fetch full workspace data when one is opened
+  useEffect(() => {
+    const fetchFullWorkspace = async () => {
+      if (!currentWorkspaceId) return;
+
+      setIsLoadingWorkspace(true);
+      try {
+        const result = await getWorkspace(currentWorkspaceId);
+        if (result.success && result.workspace) {
+          // Update the specific workspace in the list with full data
+          setWorkspaces(prev => prev.map(w =>
+            w.id === currentWorkspaceId ? result.workspace : w
+          ));
+
+          // Set initial chat messages from DB
+          if (result.workspace.chats) {
+            setMessages(result.workspace.chats.map((c: any) => ({
+              messageId: c.id,
+              username: c.username,
+              message: c.message,
+              timestamp: new Date(c.timestamp),
+              isCurrentUser: c.userId === session?.user?.id
+            })));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch full workspace:', error);
+      } finally {
+        setIsLoadingWorkspace(false);
+      }
+    };
+
+    if (view === 'workspace') {
+      fetchFullWorkspace();
+    }
+  }, [currentWorkspaceId, view, session?.user?.id]);
 
   // File creation states
   const [showNewFileInput, setShowNewFileInput] = useState<{ type: 'file' | 'folder', path: string } | null>(null);
@@ -195,31 +232,6 @@ export const WorkspaceContainer: React.FC = () => {
     }
   }, [status, session]);
 
-  // Fetch full workspace data when one is opened
-  useEffect(() => {
-    const fetchFullWorkspace = async () => {
-      if (!currentWorkspaceId) return;
-
-      setIsLoadingWorkspace(true);
-      try {
-        const result = await getWorkspace(currentWorkspaceId);
-        if (result.success && result.workspace) {
-          // Update the specific workspace in the list with full data
-          setWorkspaces(prev => prev.map(w =>
-            w.id === currentWorkspaceId ? result.workspace : w
-          ));
-        }
-      } catch (error) {
-        console.error('Failed to fetch full workspace:', error);
-      } finally {
-        setIsLoadingWorkspace(false);
-      }
-    };
-
-    if (view === 'workspace') {
-      fetchFullWorkspace();
-    }
-  }, [currentWorkspaceId, view]);
 
   // Real-time workspace integration
   const handleCallEvent = useCallback((data: any) => {
@@ -361,11 +373,17 @@ export const WorkspaceContainer: React.FC = () => {
   };
 
   const handleAcquireLock = async (): Promise<void> => {
-    if (!selectedFile) return;
+    if (!selectedFile || !currentWorkspaceId || !session?.user?.id) return;
 
     try {
-      await acquireFileLock(selectedFile);
-      console.log('Lock acquired:', selectedFile);
+      const result = await lockWorkspaceFile(currentWorkspaceId, selectedFile, session.user.id);
+      if (result.success) {
+        await acquireFileLock(selectedFile);
+        toast.success('File locked for editing');
+      } else {
+        toast.error(result.error || 'Failed to acquire lock');
+        throw new Error(result.error);
+      }
     } catch (error) {
       console.error('Failed to acquire lock:', error);
       throw error;
@@ -373,11 +391,14 @@ export const WorkspaceContainer: React.FC = () => {
   };
 
   const handleReleaseLock = async (): Promise<void> => {
-    if (!selectedFile) return;
+    if (!selectedFile || !currentWorkspaceId || !session?.user?.id) return;
 
     try {
-      await releaseFileLock(selectedFile);
-      console.log('Lock released:', selectedFile);
+      const result = await unlockWorkspaceFile(currentWorkspaceId, selectedFile, session.user.id);
+      if (result.success) {
+        await releaseFileLock(selectedFile);
+        toast.success('File unlocked');
+      }
     } catch (error) {
       console.error('Failed to release lock:', error);
       throw error;
@@ -395,15 +416,42 @@ export const WorkspaceContainer: React.FC = () => {
   };
 
   const handlePushToGit = async (commitMessage: string): Promise<void> => {
-    // TODO: Call API route to push to Git
-    console.log('Pushing to Git:', commitMessage);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (!currentWorkspaceId) return;
+
+    toast.info('Pushing changes to Git...');
+    try {
+      const { pushToGit } = await import('@/app/actions/workspace');
+      const result = await pushToGit(currentWorkspaceId, commitMessage);
+      if (result.success) {
+        toast.success('Successfully pushed to Git');
+      } else {
+        toast.error(result.error || 'Failed to push to Git');
+      }
+    } catch (error) {
+      toast.error('Failed to push to Git');
+    }
   };
 
   const handlePullFromGit = async (): Promise<void> => {
-    // TODO: Call API route to pull from Git
-    console.log('Pulling from Git');
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (!currentWorkspaceId) return;
+
+    toast.info('Pulling latest changes...');
+    try {
+      const { pullFromGit } = await import('@/app/actions/workspace');
+      const result = await pullFromGit(currentWorkspaceId);
+      if (result.success) {
+        toast.success('Successfully pulled from Git');
+        // Refresh workspace
+        const refresh = await getWorkspace(currentWorkspaceId);
+        if (refresh.success && refresh.workspace) {
+          setWorkspaces(prev => prev.map(w => w.id === currentWorkspaceId ? refresh.workspace : w));
+        }
+      } else {
+        toast.error(result.error || 'Failed to pull from Git');
+      }
+    } catch (error) {
+      toast.error('Failed to pull from Git');
+    }
   };
 
   const handleDeleteWorkspace = async (): Promise<void> => {

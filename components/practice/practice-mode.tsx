@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Code2, GraduationCap, Lightbulb, Target } from 'lucide-react';
+import { BookOpen, Code2, GraduationCap, Lightbulb, Target, Calendar, Zap, GitCompare } from 'lucide-react';
 import { getLearningPaths } from '@/app/actions/practice';
+import { getDailyChallenges, generateDailyChallenges } from '@/app/actions/daily-challenge';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
@@ -17,24 +18,40 @@ interface PracticeModeProps {
 export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps) {
   const { data: session } = useSession();
   const [learningPaths, setLearningPaths] = useState<any[]>([]);
+  const [dailyChallenges, setDailyChallenges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
-    const fetchPaths = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const result = await getLearningPaths(session?.user?.id);
-        if (result.success && result.learningPaths) {
-          setLearningPaths(result.learningPaths);
+        const [pathsRes, dailyRes] = await Promise.all([
+          getLearningPaths(session?.user?.id),
+          getDailyChallenges()
+        ]);
+
+        if (pathsRes.success && pathsRes.learningPaths) {
+          setLearningPaths(pathsRes.learningPaths);
+        }
+
+        if (dailyRes.success && dailyRes.challenges) {
+          setDailyChallenges(dailyRes.challenges);
+        } else {
+          // Generate if none exist for today
+          await generateDailyChallenges();
+          const retryDaily = await getDailyChallenges();
+          if (retryDaily.success && retryDaily.challenges) {
+            setDailyChallenges(retryDaily.challenges);
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch learning paths:', error);
+        console.error('Failed to fetch practice data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPaths();
+    fetchData();
   }, [session?.user?.id]);
 
   const categories = [
@@ -74,11 +91,49 @@ export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps
         <CardDescription>Master algorithms with structured learning paths</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="paths" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="daily" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="daily">Daily Challenges</TabsTrigger>
             <TabsTrigger value="paths">Learning Paths</TabsTrigger>
             <TabsTrigger value="random">Random Practice</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="daily" className="space-y-4">
+            <div className="grid gap-4">
+              {dailyChallenges.map((q, idx) => (
+                <Card key={q.id} className="border-purple-200/50 dark:border-purple-800/50 overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-3">
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
+                      {idx === 0 ? 'Easy' : idx === 1 ? 'Medium' : 'Hard'}
+                    </Badge>
+                  </div>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
+                        <Zap className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{q.title}</CardTitle>
+                        <div className="flex gap-2 mt-1">
+                          {q.tags.slice(0, 3).map((t: string) => (
+                            <span key={t} className="text-[10px] text-muted-foreground">#{t}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground line-clamp-1 max-w-[70%]">
+                      {q.description}
+                    </p>
+                    <Button size="sm" onClick={() => onStartPractice(BigInt(q.id))} className="bg-gradient-to-r from-purple-600 to-pink-600">
+                      Solve Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
           <TabsContent value="paths" className="space-y-4">
             <div className="flex gap-2 flex-wrap">

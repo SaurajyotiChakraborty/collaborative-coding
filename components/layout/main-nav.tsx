@@ -13,7 +13,8 @@ import {
     Bell,
     Menu,
     X,
-    User
+    User,
+    BookOpen
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,7 +26,11 @@ interface NavItem {
     adminOnly?: boolean;
 }
 
-const navItems: NavItem[] = [];
+const navItems: NavItem[] = [
+    { name: 'Home', href: '/', icon: <Home className="h-4 w-4" /> },
+    { name: 'Curriculum', href: '/learning-paths', icon: <BookOpen className="h-4 w-4" /> },
+    { name: 'Hall of Fame', href: '/achievements', icon: <Trophy className="h-4 w-4" /> },
+];
 
 export function MainNav() {
     const pathname = usePathname();

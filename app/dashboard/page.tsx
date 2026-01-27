@@ -20,6 +20,8 @@ import { getUserAnalytics } from '@/app/actions/analytics';
 import type { UserAnalytics } from '@/types/extended-types';
 import { BarChart as BarChartIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { AdminPanel } from '@/components/admin/admin-panel';
+import { BannedView } from '@/components/shared/banned-view';
 
 // Sub-components for better hook isolation
 const AchievementsContent = () => (
@@ -218,6 +220,17 @@ export default function DashboardPage() {
 
     // Content rendering logic
     const renderContent = () => {
+        // Admin gets completely different dashboard
+        if (user?.role === 'Admin' && (activeTab === 'admin' || activeTab === 'dashboard')) {
+            return <AdminPanel />;
+        }
+
+        // Banned user restrictions
+        const restrictedTabs = ['workspace', 'daily', 'compete', 'practice', 'spectate'];
+        if (user?.isCheater && restrictedTabs.includes(activeTab)) {
+            return <BannedView />;
+        }
+
         if (activeTab === 'workspace') return <WorkspaceContainer />;
         if (activeTab === 'daily' || activeTab === 'compete') return <CompeteContainer />;
         if (activeTab === 'leaderboard') return <LeaderboardView />;
@@ -257,6 +270,7 @@ export default function DashboardPage() {
         }
         return <FeaturePlaceholder tab={activeTab} onBack={() => setActiveTab('dashboard')} />;
     };
+
 
     return (
         <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">

@@ -38,18 +38,32 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         messages: [
           {
             role: 'system',
-            content: `You are an expert coding question generator. Generate a ${difficulty} level coding question based on the user's prompt. Return ONLY valid JSON with the following structure:
-{
-  "title": "Question Title",
-  "description": "Detailed description with examples",
-  "difficulty": "${difficulty}",
-  "testCases": [
-    {"input": "test input 1", "expectedOutput": "expected output 1"},
-    {"input": "test input 2", "expectedOutput": "expected output 2"}
-  ],
-  "tags": ["tag1", "tag2", "tag3"],
-  "constraints": "Constraints description"
-}`
+            content: `You are an expert coding question developer. Generate a ${difficulty} level coding question based on the user's prompt. 
+            The question should be high quality, challenging, and suitable for a competitive programming platform.
+            
+            Requirements:
+            1. Title: Concise and descriptive.
+            2. Description: Clear problem statement with at least two examples (input, output, and explanation).
+            3. Test Cases: Provide 5-8 diverse test cases. Include:
+               - Standard cases.
+               - Edge cases (empty input, very large/small values, duplicates, etc.).
+               - Performance-heavy cases if applicable.
+            4. Constraints: Realistic and clearly defined.
+            5. Tags: 3-5 relevant conceptual tags.
+
+            Return ONLY valid JSON with the following structure:
+            {
+              "title": "Question Title",
+              "description": "Detailed description with examples in markdown format",
+              "difficulty": "${difficulty}",
+              "testCases": [
+                {"input": "test input 1", "expectedOutput": "expected output 1"},
+                {"input": "test input 2", "expectedOutput": "expected output 2"},
+                ...
+              ],
+              "tags": ["tag1", "tag2", "tag3"],
+              "constraints": "Constraints description"
+            }`
           },
           {
             role: 'user',

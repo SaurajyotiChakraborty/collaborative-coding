@@ -2,9 +2,20 @@
 
 import prisma from '@/lib/prisma'
 import { LearningPath } from '@/types/extended-types';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]/route';
 
 export async function getLearningPaths(userId?: string) {
     try {
+        if (userId) {
+            const user = await prisma.user.findUnique({
+                where: { id: userId },
+                select: { isCheater: true }
+            });
+            if (user?.isCheater) {
+                return { success: false, error: 'Banned users cannot access learning paths.' };
+            }
+        }
         // In a real app, these would be in the database
         // For now, let's provide curated paths and calculate progress from user submissions
         // Fetch dynamic learning paths from DB
@@ -35,6 +46,16 @@ export async function getLearningPaths(userId?: string) {
 
 export async function getPracticeQuestion(questionId: number) {
     try {
+        const session = await getServerSession(authOptions);
+        if (session?.user) {
+            const user = await prisma.user.findUnique({
+                where: { id: (session.user as any).id },
+                select: { isCheater: true }
+            });
+            if (user?.isCheater) {
+                return { success: false, error: 'Banned users cannot practice questions.' };
+            }
+        }
         const question = await prisma.question.findUnique({
             where: { id: questionId },
             include: {

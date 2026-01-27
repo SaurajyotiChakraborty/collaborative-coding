@@ -147,9 +147,13 @@ export function useWorkspaceRealtime({
       throw new Error('WebSocket not connected');
     }
 
-    // TODO: Call SpacetimeDB reducer to save chat message
-    // For now, just send via WebSocket
+    // TODO: Call SpacetimeDB reducer to save chat message (Using Prisma Persistence)
+    // Send via WebSocket and also persist to DB
     wsClient.sendChatMessage(message);
+
+    // Server Action for persistence
+    const { sendWorkspaceMessage } = await import('@/app/actions/workspace');
+    await sendWorkspaceMessage(parseInt(workspaceId), userId, username, message);
 
     console.log(`Sent chat message: ${message}`);
   }, [db, wsClient]);

@@ -1,86 +1,135 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
+import OpenAI from 'openai'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]/route'
 
-export async function getDailyChallenge() {
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function generateDailyChallenges() {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return { success: false, error: 'Unauthorized' };
+
+        const user = await prisma.user.findUnique({
+            where: { id: (session.user as any).id },
+            select: { isCheater: true }
+        });
+
+        if (user?.isCheater) {
+            return { success: false, error: 'Banned users cannot participate in daily challenges.' };
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Try to get today's challenge
-        let challenge = await prisma.dailyChallenge.findFirst({
-            where: {
-                date: {
-                    gte: today,
-                    lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
-                }
-            },
-            include: {
-                question: true
-            }
+        // Check if already generated
+        const existing = await prisma.dailyChallenge.findFirst({
+            where: { date: today }
         });
 
-        // If no challenge for today, create one from random question
-        if (!challenge) {
-            const questions = await prisma.question.findMany({
-                take: 10,
-                orderBy: { createdAt: 'desc' }
+        if (existing) return { success: true };
+
+        // Generate 3 questions with AI
+        const prompt = `Generate 3 diverse coding interview questions (Easy, Medium, Hard).
+        Return as JSON array of objects: 
+        [{ title, description, difficulty, testCases: [{input, output}], constraints, tags, canonicalSolution, optimalTimeComplexity, optimalSpaceComplexity }]`;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: "You are a senior algorithm engineer." },
+                { role: "user", content: prompt }
+            ],
+            response_format: { type: "json_object" }
+        });
+
+        const data = JSON.parse(response.choices[0].message.content || '{"questions": []}');
+        const admin = await prisma.user.findFirst({ where: { role: 'Admin' } });
+
+        if (!admin) throw new Error("No admin found to assign questions to");
+
+        for (const q of data.questions) {
+            const question = await prisma.question.create({
+                data: {
+                    title: q.title,
+                    description: q.description,
+                    difficulty: q.difficulty,
+                    testCases: q.testCases,
+                    constraints: q.constraints,
+                    tags: q.tags,
+                    isAiGenerated: true,
+                    createdById: admin.id,
+                    canonicalSolution: q.canonicalSolution,
+                    optimalTimeComplexity: q.optimalTimeComplexity,
+                    optimalSpaceComplexity: q.optimalSpaceComplexity
+                }
             });
 
-            if (questions.length > 0) {
-                const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-                challenge = await prisma.dailyChallenge.create({
-                    data: {
-                        date: today,
-                        questionId: randomQuestion.id,
-                        bonusMultiplier: 1.5
-                    },
-                    include: {
-                        question: true
-                    }
-                });
-            }
+            await prisma.dailyChallenge.create({
+                data: {
+                    date: today,
+                    questionId: question.id
+                }
+            });
         }
 
-        return { success: true, challenge };
+        revalidatePath('/practice');
+        return { success: true };
     } catch (error) {
-        console.error('Failed to get daily challenge:', error);
-        return { success: false, error: 'Failed to get daily challenge' };
+        console.error('Daily challenge generation failed:', error);
+        return { success: false, error: 'Failed to generate challenges' };
     }
 }
 
-export async function checkDailyChallengeCompletion(userId: string) {
+export async function getDailyChallenges() {
     try {
+        const session = await getServerSession(authOptions);
+        if (session?.user) {
+            const user = await prisma.user.findUnique({
+                where: { id: (session.user as any).id },
+                select: { isCheater: true }
+            });
+            if (user?.isCheater) {
+                return { success: false, error: 'Banned users cannot participate in daily challenges.' };
+            }
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const challenge = await prisma.dailyChallenge.findFirst({
-            where: {
-                date: {
-                    gte: today,
-                    lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
-                }
-            }
+        const challenges = await prisma.dailyChallenge.findMany({
+            where: { date: today },
+            include: { question: true }
         });
 
-        if (!challenge) {
-            return { success: true, completed: false };
+        return { success: true, challenges: challenges.map(c => c.question) };
+    } catch (error) {
+        return { success: false, error: 'Failed to fetch challenges' };
+    }
+}
+
+export async function getOptimizationComparison(questionId: number, userCode: string) {
+    try {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId }
+        });
+
+        if (!question || !question.canonicalSolution) {
+            return { success: false, error: 'Optimal solution not available' };
         }
 
-        // Check if user has a successful submission for this question today
-        const submission = await prisma.submission.findFirst({
-            where: {
-                userId,
-                questionId: challenge.questionId,
-                allTestsPassed: true,
-                submittedAt: {
-                    gte: today
-                }
-            }
-        });
-
-        return { success: true, completed: !!submission };
+        return {
+            success: true,
+            optimalCode: question.canonicalSolution,
+            optimalTime: question.optimalTimeComplexity,
+            optimalSpace: question.optimalSpaceComplexity
+        };
     } catch (error) {
-        return { success: false, error: 'Failed to check completion' };
+        return { success: false, error: 'Failed to fetch comparison' };
     }
 }

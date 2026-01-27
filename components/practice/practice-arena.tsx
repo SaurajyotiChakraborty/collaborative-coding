@@ -21,7 +21,8 @@ import {
     BarChart,
     X,
     Terminal,
-    Beaker
+    Beaker,
+    Bot
 } from 'lucide-react';
 import { getPracticeQuestion } from '@/app/actions/practice';
 import { toast } from 'sonner';
@@ -286,18 +287,30 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                                         </ul>
                                     </div>
 
-                                    {showSolution && question.canonicalSolution && (
+                                    {showSolution && (
                                         <div className="animate-in slide-in-from-top-4">
                                             <h3 className="font-bold mb-2 text-purple-600 flex items-center gap-2">
                                                 <Sparkles className="h-4 w-4" />
                                                 The Optimal Approach
                                             </h3>
-                                            <div className="p-4 rounded-lg bg-gray-900 text-white font-mono text-xs whitespace-pre">
-                                                {question.canonicalSolution}
-                                            </div>
-                                            <div className="mt-2 text-xs text-muted-foreground italic">
-                                                Goal: {question.optimalTimeComplexity} Time | {question.optimalSpaceComplexity} Space
-                                            </div>
+                                            {question.canonicalSolution ? (
+                                                <>
+                                                    <div className="p-4 rounded-lg bg-gray-900 text-white font-mono text-xs whitespace-pre">
+                                                        {question.canonicalSolution}
+                                                    </div>
+                                                    <div className="mt-2 text-xs text-muted-foreground italic">
+                                                        Goal: {question.optimalTimeComplexity} Time | {question.optimalSpaceComplexity} Space
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="p-8 border-2 border-dashed border-purple-200 dark:border-purple-800 rounded-xl text-center">
+                                                    <Bot className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                                                    <p className="text-sm text-muted-foreground italic">
+                                                        The optimal solution for this challenge hasn't been verified by our AI architects yet.
+                                                        Check back soon or try to find it yourself!
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </TabsContent>

@@ -96,6 +96,7 @@ model Question {
   createdById     String
   createdBy       User               @relation(fields: [createdById], references: [id])
   isAiGenerated   Boolean            @default(false)
+  isApproved      Boolean            @default(true)
   createdAt       DateTime           @default(now())
   
   submissions     Submission[]

@@ -18,7 +18,7 @@ export async function createCompetition(data: {
         // Verify the user exists to prevent P2003 errors
         const userExists = await prisma.user.findUnique({
             where: { id: data.createdById },
-            select: { id: true }
+            select: { id: true, isCheater: true }
         });
 
         if (!userExists) {
@@ -26,6 +26,13 @@ export async function createCompetition(data: {
             return {
                 success: false,
                 error: 'Your session might be stale. Please log out and log back in to sync your account.'
+            };
+        }
+
+        if (userExists.isCheater) {
+            return {
+                success: false,
+                error: 'Your account is restricted from creating competitions.'
             };
         }
 
@@ -130,6 +137,15 @@ export async function joinCompetition(competitionId: number, userId: string) {
         })
 
         if (!competition) return { success: false, error: 'Competition not found' }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { isCheater: true }
+        });
+        if (user?.isCheater) {
+            return { success: false, error: 'Your account is restricted from participating in competitions.' };
+        }
+
         if (competition.status !== 'Waiting') return { success: false, error: 'Competition not accepting players' }
         if (competition.participants.length >= competition.maxParticipants) return { success: false, error: 'Competition full' }
 
