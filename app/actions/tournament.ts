@@ -13,6 +13,7 @@ export async function createTournament(data: {
     endTime: Date;
     questionIds: number[];
     maxParticipants?: number;
+    badgeTitle?: string;
 }) {
     try {
         const session = await getServerSession(authOptions);
@@ -29,6 +30,7 @@ export async function createTournament(data: {
                 endTime: data.endTime,
                 mode: 'Human',
                 maxParticipants: data.maxParticipants || 100,
+                badgeTitle: data.badgeTitle,
                 questions: {
                     connect: data.questionIds.map(id => ({ id }))
                 },

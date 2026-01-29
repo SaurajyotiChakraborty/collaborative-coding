@@ -8,12 +8,15 @@ export interface GitConfig {
   branch: string;
   workspaceId: string;
   githubToken?: string;
+  targetDir?: string;
+  preserve?: boolean;
 }
 
 export interface CloneResult {
   success: boolean;
   cloudStoragePath: string;
   filesCount: number;
+  files?: StorageFile[];
   error?: string;
 }
 
@@ -52,8 +55,9 @@ export class GitOperations {
       // Ensure temp directory exists
       await fs.mkdir(this.tempDir, { recursive: true });
 
-      // Configure git options
-      const options: SimpleGitOptions = {
+      // Configure git options - Use tempDir as safe base, or parent of targetDir
+      // If targetDir is provided, we still need a valid CWD to spawn the process.
+      const options: any = {
         baseDir: this.tempDir,
         binary: 'git',
         maxConcurrentProcesses: 6,
@@ -61,18 +65,21 @@ export class GitOperations {
 
       const git: SimpleGit = simpleGit(options);
 
+      // Determine clone path
+      const clonePath = config.targetDir || workspacePath;
+
       // Clone the repository
       const repoUrl = this.getAuthenticatedUrl(config.repoUrl, config.githubToken);
-      await git.clone(repoUrl, workspacePath, ['--branch', config.branch, '--single-branch']);
+      await git.clone(repoUrl, clonePath, ['--branch', config.branch, '--single-branch']);
 
-      console.log(`Repository cloned to: ${workspacePath}`);
+      console.log(`Repository cloned to: ${clonePath}`);
 
       // Run npm install if package.json exists
-      const packageJsonPath = path.join(workspacePath, 'package.json');
+      const packageJsonPath = path.join(clonePath, 'package.json');
       try {
         await fs.access(packageJsonPath);
         console.log('Running npm install...');
-        
+
         // TODO: Execute npm install using child_process
         // const { exec } = require('child_process');
         // await new Promise((resolve, reject) => {
@@ -86,24 +93,27 @@ export class GitOperations {
       }
 
       // Read all files and upload to cloud storage
-      const files = await this.readDirectoryRecursive(workspacePath);
+      const files = await this.readDirectoryRecursive(clonePath);
       const storageKey = await this.storage.saveWorkspace(config.workspaceId, files);
 
-      // Cleanup local files
-      await this.cleanupDirectory(workspacePath);
+      // Cleanup local files unless preserved
+      if (!config.preserve) {
+        await this.cleanupDirectory(workspacePath);
+      }
 
       return {
         success: true,
         cloudStoragePath: storageKey,
         filesCount: files.length,
+        files: files,
       };
     } catch (error) {
       console.error('Clone error:', error);
-      
+
       // Cleanup on failure
       try {
         await this.cleanupDirectory(workspacePath);
-      } catch {}
+      } catch { }
 
       return {
         success: false,
@@ -123,11 +133,11 @@ export class GitOperations {
     try {
       // Download files from cloud storage
       const files = await this.storage.loadWorkspace(cloudStoragePath);
-      
+
       // Write files to temporary directory
       await fs.mkdir(workspacePath, { recursive: true });
       await Promise.all(
-        files.map(file => this.writeFile(workspacePath, file.path, file.content))
+        files.map(file => this.writeFile(workspacePath, file.path, typeof file.content === 'string' ? file.content : file.content.toString()))
       );
 
       // Configure git
@@ -157,11 +167,11 @@ export class GitOperations {
       };
     } catch (error) {
       console.error('Push error:', error);
-      
+
       // Cleanup on failure
       try {
         await this.cleanupDirectory(workspacePath);
-      } catch {}
+      } catch { }
 
       return {
         success: false,
@@ -191,7 +201,7 @@ export class GitOperations {
       // Clone fresh copy
       await fs.mkdir(this.tempDir, { recursive: true });
       const git: SimpleGit = simpleGit(this.tempDir);
-      
+
       const repoUrl = this.getAuthenticatedUrl(config.repoUrl, config.githubToken);
       await git.clone(repoUrl, workspacePath, ['--branch', config.branch, '--single-branch']);
 
@@ -210,11 +220,11 @@ export class GitOperations {
       };
     } catch (error) {
       console.error('Pull error:', error);
-      
+
       // Cleanup on failure
       try {
         await this.cleanupDirectory(workspacePath);
-      } catch {}
+      } catch { }
 
       return {
         success: false,
@@ -255,10 +265,13 @@ export class GitOperations {
         const subFiles = await this.readDirectoryRecursive(fullPath, relPath);
         files.push(...subFiles);
       } else {
-        const content = await fs.readFile(fullPath, 'utf-8');
+        const buffer = await fs.readFile(fullPath);
+        // Check for null bytes to detect binary files
+        const isBinary = buffer.includes(0);
+
         files.push({
-          path: `/${relPath}`,
-          content,
+          path: `/${relPath.replace(/\\/g, '/')}`,
+          content: isBinary ? '[Binary File - Cannot display in editor]' : buffer.toString('utf-8'),
         });
       }
     }

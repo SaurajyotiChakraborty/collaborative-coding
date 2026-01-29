@@ -1,570 +1,248 @@
 {
   "entries": {
-    "182b3757a87f": {
+    "b08f302d9bd2": {
       "type": "content",
-      "sourceText": "Optimize Coder",
+      "sourceText": "Loading workspace details...",
       "context": {
-        "componentName": "SideNav",
-        "filePath": "../components/layout/side-nav.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "182b3757a87f",
+      "hash": "b08f302d9bd2",
       "location": {
-        "filePath": "../components/layout/side-nav.tsx",
-        "line": 103,
-        "column": 20
-      }
-    },
-    "40c7e4cc9280": {
-      "type": "content",
-      "sourceText": "Compete • Code • Conquer",
-      "context": {
-        "componentName": "SideNav",
-        "filePath": "../components/layout/side-nav.tsx"
-      },
-      "hash": "40c7e4cc9280",
-      "location": {
-        "filePath": "../components/layout/side-nav.tsx",
-        "line": 106,
-        "column": 20
-      }
-    },
-    "9bd2949ae10b": {
-      "type": "content",
-      "sourceText": "Logout",
-      "context": {
-        "componentName": "SideNav",
-        "filePath": "../components/layout/side-nav.tsx"
-      },
-      "hash": "9bd2949ae10b",
-      "location": {
-        "filePath": "../components/layout/side-nav.tsx",
-        "line": 192,
-        "column": 16
-      }
-    },
-    "3860a98d1d8d": {
-      "type": "attribute",
-      "sourceText": "Logout",
-      "context": {
-        "attributeName": "title",
-        "componentName": "SideNav",
-        "filePath": "../components/layout/side-nav.tsx"
-      },
-      "hash": "3860a98d1d8d",
-      "location": {
-        "filePath": "../components/layout/side-nav.tsx",
-        "line": 206,
-        "column": 16
-      }
-    },
-    "415eb71b1639": {
-      "type": "content",
-      "sourceText": "Achievements",
-      "context": {
-        "componentName": "AchievementsContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "415eb71b1639",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 32,
-        "column": 8
-      }
-    },
-    "2284adf62024": {
-      "type": "content",
-      "sourceText": "No analytics data available yet. Start competing to see your stats!",
-      "context": {
-        "componentName": "AnalyticsContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "2284adf62024",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 61,
-        "column": 12
-      }
-    },
-    "e8b5bdc9f5aa": {
-      "type": "content",
-      "sourceText": "Welcome back, {expression0}!",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "e8b5bdc9f5aa",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 75,
-        "column": 12
-      }
-    },
-    "f0ba2ca11af1": {
-      "type": "content",
-      "sourceText": "Ready to compete and improve your coding skills?",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "f0ba2ca11af1",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 78,
-        "column": 12
-      }
-    },
-    "3053169d14ae": {
-      "type": "content",
-      "sourceText": "Rating",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "3053169d14ae",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 84,
-        "column": 20
-      }
-    },
-    "2ec6208b89c8": {
-      "type": "content",
-      "sourceText": "Your competitive rank",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "2ec6208b89c8",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 89,
-        "column": 20
-      }
-    },
-    "1781643f31bf": {
-      "type": "content",
-      "sourceText": "Experience",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "1781643f31bf",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 94,
-        "column": 20
-      }
-    },
-    "95571da45569": {
-      "type": "content",
-      "sourceText": "{expression0} XP",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "95571da45569",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 98,
-        "column": 20
-      }
-    },
-    "10f4c3188bfd": {
-      "type": "content",
-      "sourceText": "Total platform XP",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "10f4c3188bfd",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 99,
-        "column": 20
-      }
-    },
-    "2360e69cd41d": {
-      "type": "content",
-      "sourceText": "Role",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "2360e69cd41d",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 104,
-        "column": 20
-      }
-    },
-    "71e364df1f3c": {
-      "type": "content",
-      "sourceText": "Account privilege level",
-      "context": {
-        "componentName": "WelcomeContent",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "71e364df1f3c",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 111,
-        "column": 20
-      }
-    },
-    "f300c5f177c9": {
-      "type": "content",
-      "sourceText": "This feature is currently under high-priority development. Stay tuned for updates!",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "f300c5f177c9",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 151,
-        "column": 8
-      }
-    },
-    "0e6e819e587b": {
-      "type": "content",
-      "sourceText": "Next Level Coding",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "0e6e819e587b",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 157,
-        "column": 16
-      }
-    },
-    "22082231edae": {
-      "type": "content",
-      "sourceText": "Advanced algorithms coming soon",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "22082231edae",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 158,
-        "column": 16
-      }
-    },
-    "bc5c0920f5c9": {
-      "type": "content",
-      "sourceText": "Exclusive Rewards",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "bc5c0920f5c9",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 162,
-        "column": 16
-      }
-    },
-    "f548787e9203": {
-      "type": "content",
-      "sourceText": "Earn tokens and custom themes",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "f548787e9203",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 163,
-        "column": 16
-      }
-    },
-    "efd6b076cedc": {
-      "type": "content",
-      "sourceText": "Back to Dashboard",
-      "context": {
-        "componentName": "FeaturePlaceholder",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "efd6b076cedc",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 166,
-        "column": 8
-      }
-    },
-    "ee7a58e3ea04": {
-      "type": "content",
-      "sourceText": "Redirecting to login...",
-      "context": {
-        "componentName": "DashboardPage",
-        "filePath": "dashboard/page.tsx"
-      },
-      "hash": "ee7a58e3ea04",
-      "location": {
-        "filePath": "dashboard/page.tsx",
-        "line": 301,
-        "column": 20
-      }
-    },
-    "55af40d51744": {
-      "type": "content",
-      "sourceText": "Optimize Coder",
-      "context": {
-        "componentName": "ModernHeader",
-        "filePath": "../components/layout/modern-header.tsx"
-      },
-      "hash": "55af40d51744",
-      "location": {
-        "filePath": "../components/layout/modern-header.tsx",
-        "line": 32,
-        "column": 12
-      }
-    },
-    "e7be132f1590": {
-      "type": "content",
-      "sourceText": "Compete • Code • Conquer",
-      "context": {
-        "componentName": "ModernHeader",
-        "filePath": "../components/layout/modern-header.tsx"
-      },
-      "hash": "e7be132f1590",
-      "location": {
-        "filePath": "../components/layout/modern-header.tsx",
-        "line": 35,
-        "column": 12
-      }
-    },
-    "faee1328f4eb": {
-      "type": "attribute",
-      "sourceText": "Logout",
-      "context": {
-        "attributeName": "title",
-        "componentName": "ModernHeader",
-        "filePath": "../components/layout/modern-header.tsx"
-      },
-      "hash": "faee1328f4eb",
-      "location": {
-        "filePath": "../components/layout/modern-header.tsx",
-        "line": 54,
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 515,
         "column": 10
       }
     },
-    "85e576efd123": {
+    "4c233f0bc798": {
       "type": "content",
-      "sourceText": "Notifications",
+      "sourceText": "Back to Dashboard",
       "context": {
-        "componentName": "NotificationBell",
-        "filePath": "../components/notifications/notification-bell.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "85e576efd123",
+      "hash": "4c233f0bc798",
       "location": {
-        "filePath": "../components/notifications/notification-bell.tsx",
-        "line": 110,
-        "column": 20
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 544,
+        "column": 10
       }
     },
-    "c17c468d0c9f": {
+    "0e73dfdf435b": {
       "type": "content",
-      "sourceText": "Mark all read",
+      "sourceText": "Open in Browser",
       "context": {
-        "componentName": "NotificationBell",
-        "filePath": "../components/notifications/notification-bell.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "c17c468d0c9f",
+      "hash": "0e73dfdf435b",
       "location": {
-        "filePath": "../components/notifications/notification-bell.tsx",
-        "line": 112,
-        "column": 24
-      }
-    },
-    "2844b433cc47": {
-      "type": "content",
-      "sourceText": "No notifications yet",
-      "context": {
-        "componentName": "NotificationBell",
-        "filePath": "../components/notifications/notification-bell.tsx"
-      },
-      "hash": "2844b433cc47",
-      "location": {
-        "filePath": "../components/notifications/notification-bell.tsx",
-        "line": 124,
-        "column": 24
-      }
-    },
-    "f29fe1fca754": {
-      "type": "content",
-      "sourceText": "Loading upcoming arena...",
-      "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
-      },
-      "hash": "f29fe1fca754",
-      "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 51,
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 561,
         "column": 16
       }
     },
-    "1c24c058b0de": {
-      "type": "content",
-      "sourceText": "Global Tournaments",
+    "db17a7a4310c": {
+      "type": "attribute",
+      "sourceText": "Workspace Editor",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "attributeName": "title",
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "1c24c058b0de",
+      "hash": "db17a7a4310c",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 69,
-        "column": 20
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 565,
+        "column": 14
       }
     },
-    "9ff8f4146bda": {
+    "9a98786da58a": {
       "type": "content",
-      "sourceText": "Compete with the best and climb the worldwide rankings",
+      "sourceText": "Ready to Code?",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "9ff8f4146bda",
+      "hash": "9a98786da58a",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 72,
-        "column": 20
-      }
-    },
-    "5c88b5909736": {
-      "type": "content",
-      "sourceText": "Legendary Rewards",
-      "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
-      },
-      "hash": "5c88b5909736",
-      "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 77,
-        "column": 24
-      }
-    },
-    "95a27b35b13b": {
-      "type": "content",
-      "sourceText": "No Tournaments Scheduled",
-      "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
-      },
-      "hash": "95a27b35b13b",
-      "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 79,
-        "column": 24
-      }
-    },
-    "0c79019c0962": {
-      "type": "content",
-      "sourceText": "Keep an eye on this space for upcoming major events!",
-      "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
-      },
-      "hash": "0c79019c0962",
-      "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 80,
-        "column": 24
-      }
-    },
-    "2a2363afd936": {
-      "type": "content",
-      "sourceText": "Loading arena...",
-      "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
-      },
-      "hash": "2a2363afd936",
-      "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 59,
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 576,
         "column": 16
       }
     },
-    "1b30a6400e6e": {
+    "fc0c124a3c0b": {
       "type": "content",
-      "sourceText": "Upcoming Events",
+      "sourceText": "Start the Cloud Environment to launch VS Code directly in your browser.",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "1b30a6400e6e",
+      "hash": "fc0c124a3c0b",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 84,
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 577,
         "column": 16
       }
     },
-    "4856676333d3": {
+    "068982fe122e": {
       "type": "content",
-      "sourceText": "No Upcoming Tournaments",
+      "sourceText": "Starting Container...",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "4856676333d3",
+      "hash": "068982fe122e",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 95,
-        "column": 28
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 586,
+        "column": 18
       }
     },
-    "936cb80dfcbc": {
+    "e09397ebb1c9": {
       "type": "content",
-      "sourceText": "Stay tuned for the next major event!",
+      "sourceText": "Start Workspace",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "936cb80dfcbc",
+      "hash": "e09397ebb1c9",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 96,
-        "column": 28
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 591,
+        "column": 18
       }
     },
-    "b3690273a4df": {
+    "985c08038d53": {
       "type": "content",
-      "sourceText": "Past Winners",
+      "sourceText": "Team Chat & Voice",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "WorkspaceContainer",
+        "filePath": "../components/workspace/workspace-container.tsx"
       },
-      "hash": "b3690273a4df",
+      "hash": "985c08038d53",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 145,
+        "filePath": "../components/workspace/workspace-container.tsx",
+        "line": 608,
+        "column": 14
+      }
+    },
+    "5bab243b51a5": {
+      "type": "content",
+      "sourceText": "Workspace",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "5bab243b51a5",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 225,
+        "column": 10
+      }
+    },
+    "9f5ecb5324b4": {
+      "type": "content",
+      "sourceText": "Chat",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "9f5ecb5324b4",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 249,
+        "column": 12
+      }
+    },
+    "e42234e11e54": {
+      "type": "content",
+      "sourceText": "Team ({expression0})",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "e42234e11e54",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 250,
+        "column": 12
+      }
+    },
+    "2901e50cc6d4": {
+      "type": "content",
+      "sourceText": "is calling...",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "2901e50cc6d4",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 260,
         "column": 16
       }
     },
-    "78568ab1ad97": {
+    "10f2c232e48a": {
       "type": "content",
-      "sourceText": "No past tournaments recorded yet.",
+      "sourceText": "Join",
       "context": {
-        "componentName": "TournamentView",
-        "filePath": "../components/dashboard/tournament-view.tsx"
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
       },
-      "hash": "78568ab1ad97",
+      "hash": "10f2c232e48a",
       "location": {
-        "filePath": "../components/dashboard/tournament-view.tsx",
-        "line": 151,
-        "column": 20
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 263,
+        "column": 16
+      }
+    },
+    "54c8237ff6ea": {
+      "type": "content",
+      "sourceText": "Ignore",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "54c8237ff6ea",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 264,
+        "column": 16
+      }
+    },
+    "5b05917610af": {
+      "type": "content",
+      "sourceText": "No Radio Traffic",
+      "context": {
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "5b05917610af",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 279,
+        "column": 18
+      }
+    },
+    "50f7361901cd": {
+      "type": "attribute",
+      "sourceText": "Send message to team...",
+      "context": {
+        "attributeName": "placeholder",
+        "componentName": "ChatSidebar",
+        "filePath": "../components/workspace/chat-sidebar.tsx"
+      },
+      "hash": "50f7361901cd",
+      "location": {
+        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "line": 318,
+        "column": 14
       }
     }
   },
   "stats": {
-    "totalEntries": 40,
-    "lastUpdated": "2026-01-29T07:18:48.288Z"
+    "totalEntries": 17,
+    "lastUpdated": "2026-01-29T17:06:30.856Z"
   }
 }

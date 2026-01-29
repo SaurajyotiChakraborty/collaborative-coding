@@ -3,6 +3,9 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { GitOperations } from '@/lib/git-operations'
+import { RunnerService } from '@/lib/runner-service'
+import path from 'path'
+import fs from 'fs/promises'
 
 export async function pushToGit(workspaceId: number, commitMessage: string) {
     try {
@@ -111,6 +114,41 @@ export async function createWorkspace(data: {
                 leader: true
             }
         })
+
+        // Sync Git Repository
+        try {
+            // Get GitHub Token
+            const account = await prisma.account.findFirst({
+                where: { userId: data.leaderId, provider: 'github' }
+            });
+
+            const git = new GitOperations();
+            const cloneResult = await git.cloneRepository({
+                repoUrl: data.gitRepoUrl,
+                branch: data.gitBranch,
+                workspaceId: workspace.id.toString(),
+                githubToken: account?.access_token || undefined
+            });
+
+            if (cloneResult.success && cloneResult.files) {
+                // Bulk insert files
+                await prisma.$transaction(
+                    cloneResult.files.map(file =>
+                        prisma.workspaceFile.create({
+                            data: {
+                                workspaceId: workspace.id,
+                                filePath: file.path,
+                                content: typeof file.content === 'string' ? file.content : '', // Handle buffer if binary
+                                lastModifiedById: data.leaderId
+                            }
+                        })
+                    )
+                );
+            }
+        } catch (error) {
+            console.error('Git sync failed during workspace creation:', error);
+            // Don't fail the whole creation, just log invalid sync
+        }
 
         revalidatePath('/workspace')
         return { success: true, workspace }
@@ -360,5 +398,75 @@ export async function unlockWorkspaceFile(workspaceId: number, filePath: string,
     } catch (error) {
         console.error('Failed to unlock file:', error);
         return { success: false, error: 'Failed to unlock file' };
+    }
+}
+
+export async function startWorkspaceSession(workspaceId: number) {
+    try {
+        const workspace = await prisma.workspaceGroup.findUnique({
+            where: { id: workspaceId }
+        });
+
+        if (!workspace) return { success: false, error: 'Workspace not found' };
+
+        // Define local storage path for Docker mount
+        // Using a directory inside the project for now, or /tmp/workspaces
+        // const storageRoot = path.join(process.cwd(), 'workspace-storage'); // This might be inside the app, safer to use temp or distinct drive
+        const storageRoot = process.env.WORKSPACE_STORAGE_ROOT || path.join(process.cwd(), '..', 'workspace-data');
+        const workspacePath = path.join(storageRoot, workspaceId.toString());
+
+        await fs.mkdir(storageRoot, { recursive: true });
+
+        const git = new GitOperations();
+        let isValidRepo = false;
+        try {
+            // Check if .git directory exists to confirm it's a valid repo
+            await fs.access(path.join(workspacePath, '.git'));
+            isValidRepo = true;
+        } catch { }
+
+        if (isValidRepo) {
+            console.log(`Workspace ${workspaceId} repo exists and is valid at ${workspacePath}`);
+            // Optional: Try to pull latest changes here?
+            // For now, we assume if it exists, it's good, to avoid conflicts/merges on startup.
+        } else {
+            // If directory exists but invalid (empty or broken), clean it up
+            try {
+                await fs.rm(workspacePath, { recursive: true, force: true });
+            } catch { }
+
+            // Clone fresh
+            console.log(`Cloning workspace ${workspaceId} to ${workspacePath}...`);
+
+            const account = await prisma.account.findFirst({
+                where: { userId: workspace.leaderId, provider: 'github' }
+            });
+
+            const cloneResult = await git.cloneRepository({
+                repoUrl: workspace.gitRepoUrl,
+                branch: workspace.gitBranch,
+                workspaceId: workspaceId.toString(),
+                githubToken: account?.access_token || undefined,
+                targetDir: workspacePath,
+                preserve: true
+            });
+
+            if (!cloneResult.success) {
+                console.error('Clone failed:', cloneResult.error);
+                return { success: false, error: `Failed to clone repository: ${cloneResult.error}` };
+            }
+        }
+
+        const runner = new RunnerService();
+        const containerInfo = await runner.spawnContainer({
+            workspaceId: workspaceId.toString(),
+            projectPath: workspacePath
+        });
+
+        return { success: true, url: containerInfo.url };
+
+    } catch (error) {
+        console.error('Failed to start workspace session:', error);
+        return { success: false, error: 'Failed to start workspace session' };
     }
 }

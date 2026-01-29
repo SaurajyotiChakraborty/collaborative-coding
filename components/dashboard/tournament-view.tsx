@@ -162,6 +162,16 @@ export function TournamentView() {
                                         {t.rankings.length} Winners
                                     </Badge>
                                 </div>
+
+                                {t.badgeTitle && (
+                                    <div className="bg-yellow-50 dark:bg-yellow-900/20 px-6 py-2 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800">
+                                        <Trophy className="h-4 w-4 text-yellow-600" />
+                                        <span className="text-xs font-bold text-yellow-700 dark:text-yellow-500 uppercase tracking-wider">
+                                            Badge: {t.badgeTitle}
+                                        </span>
+                                    </div>
+                                )}
+
                                 <div className="p-0">
                                     {t.rankings.map((r: any, i: number) => (
                                         <div key={r.userId} className={`flex items-center gap-4 p-4 ${i === 0 ? 'bg-yellow-500/5 dark:bg-yellow-500/10' : ''}`}>

@@ -10,7 +10,7 @@ import { MemberList, type WorkspaceMember } from './member-list';
 import { GitPanel } from './git-panel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Users, MessageSquare, Code2, ChevronRight, X, FolderGit2, BarChart, GitBranch, Settings, Plus, File, Trophy, Circle, Video } from 'lucide-react';
+import { ArrowLeft, Users, MessageSquare, Code2, ChevronRight, X, FolderGit2, BarChart, GitBranch, Settings, Plus, File, Trophy, Circle, Video, Search, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { useWorkspaceRealtime } from '@/hooks/use-workspace-realtime';
@@ -193,7 +193,8 @@ export const WorkspaceContainer: React.FC = () => {
       parts.forEach((part: string, index: number) => {
         const isLast = index === parts.length - 1;
         const parentPath = currentPath;
-        currentPath = currentPath ? `${currentPath}/${part}` : part;
+        // Ensure paths start with / to match DB
+        currentPath = currentPath ? `${currentPath}/${part}` : `/${part}`;
 
         if (!map[currentPath]) {
           const newNode: FileNode = {
@@ -461,17 +462,34 @@ export const WorkspaceContainer: React.FC = () => {
     setView('dashboard');
   };
 
+  const [sessionUrl, setSessionUrl] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+
+  const handleStartSession = async () => {
+    if (!currentWorkspaceId) return;
+    setIsStarting(true);
+    try {
+      const { startWorkspaceSession } = await import('@/app/actions/workspace');
+      const result = await startWorkspaceSession(currentWorkspaceId);
+      if (result.success && result.url) {
+        setSessionUrl(result.url);
+        toast.success('Workspace session started');
+      } else {
+        toast.error(result.error || 'Failed to start session');
+      }
+    } catch (error) {
+      console.error('Failed to start session:', error);
+      toast.error('Failed to start session');
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
   if (view === 'dashboard') {
     return (
       <>
         <WorkspaceDashboard
-          onCreateWorkspace={() => {
-            // Check if GitHub is linked? 
-            // The requirement says "click required to link the github account"
-            // So we'll show the dialog but maybe with a restriction inside?
-            // Or here.
-            setShowCreateDialog(true);
-          }}
+          onCreateWorkspace={() => setShowCreateDialog(true)}
           onJoinWorkspace={handleJoinWorkspace}
           onOpenWorkspace={handleOpenWorkspace}
           workspaces={workspaces}
@@ -505,27 +523,12 @@ export const WorkspaceContainer: React.FC = () => {
       "h-full flex flex-col bg-[#1e1e1e] text-[#cccccc] selection:bg-[#264f78]",
       isFullscreen && "fixed inset-0 z-[100] w-screen h-screen"
     )}>
-      {/* VS Code Top Header / Status Bar */}
+      {/* Header */}
       <div className="h-9 flex items-center justify-between px-3 bg-[#323233] border-b border-[#2b2b2b] select-none text-sm">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Code2 className="h-4 w-4 text-purple-500" />
             <span className="font-medium text-[#cccccc]">{currentWorkspace?.name}</span>
-          </div>
-          <div className="flex items-center gap-3 text-[#969696] text-xs">
-            <span>File</span>
-            <span>Edit</span>
-            <span>Selection</span>
-            <span>View</span>
-            <span>Go</span>
-            <span>Run</span>
-            <span>Terminal</span>
-            <span>Help</span>
-          </div>
-        </div>
-        <div className="flex-1 flex justify-center mx-4">
-          <div className="bg-[#3c3c3c] rounded px-12 py-1 text-xs text-[#cccccc] cursor-pointer hover:bg-[#454545] border border-[#454545] transition-colors w-full max-w-md text-center truncate">
-            {currentWorkspace?.name} — {selectedFile || 'Welcome'}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -540,197 +543,64 @@ export const WorkspaceContainer: React.FC = () => {
           </Button>
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-[#cccccc] hover:bg-[#454545] hover:text-white"
+            size="sm"
             onClick={() => setView('dashboard')}
-            title="Back to Dashboard"
+            className="h-7 text-xs"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3 w-3 mr-1" /> Back to Dashboard
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* VS Code Activity Bar (Vertical icons on far left) */}
-        <div className="w-12 bg-[#333333] flex flex-col items-center py-2 gap-4 border-r border-[#2b2b2b]">
-          <button
-            onClick={() => setSidebarView('explorer')}
-            className={cn("p-2 transition-colors relative group", sidebarView === 'explorer' ? "text-white border-l-2 border-white" : "text-[#858585] hover:text-white")}
-          >
-            <FolderGit2 className="h-6 w-6" />
-            <span className="absolute left-14 bg-[#252526] px-2 py-1 rounded text-xs whitespace-nowrap hidden group-hover:block z-50 border border-[#454545] shadow-xl">Explorer</span>
-          </button>
-          <button
-            onClick={() => setSidebarView('search')}
-            className={cn("p-2 transition-colors relative group", sidebarView === 'search' ? "text-white border-l-2 border-white" : "text-[#858585] hover:text-white")}
-          >
-            <div className="h-6 w-6 flex items-center justify-center"><BarChart className="h-5 w-5" /></div>
-            <span className="absolute left-14 bg-[#252526] px-2 py-1 rounded text-xs whitespace-nowrap hidden group-hover:block z-50 border border-[#454545] shadow-xl">Analytics</span>
-          </button>
-          <button
-            onClick={() => setSidebarView('git')}
-            className={cn("p-2 transition-colors relative group", sidebarView === 'git' ? "text-white border-l-2 border-white" : "text-[#858585] hover:text-white")}
-          >
-            <div className="h-6 w-6 flex items-center justify-center"><GitBranch className="h-5 w-5" /></div>
-            <span className="absolute left-14 bg-[#252526] px-2 py-1 rounded text-xs whitespace-nowrap hidden group-hover:block z-50 border border-[#454545] shadow-xl">Source Control</span>
-          </button>
-          <button
-            onClick={() => setSidebarView('members')}
-            className={cn("p-2 transition-colors relative group", sidebarView === 'members' ? "text-white border-l-2 border-white" : "text-[#858585] hover:text-white")}
-          >
-            <Users className="h-6 w-6" />
-            <span className="absolute left-14 bg-[#252526] px-2 py-1 rounded text-xs whitespace-nowrap hidden group-hover:block z-50 border border-[#454545] shadow-xl">Collaborators</span>
-          </button>
-          <div className="mt-auto flex flex-col items-center gap-4 pb-2">
-            <Settings className="h-6 w-6 text-[#858585] hover:text-white cursor-pointer" />
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-[10px] font-bold border border-[#454545]">
-              {session?.user?.username?.charAt(0).toUpperCase()}
-            </div>
-          </div>
-        </div>
-
-        {/* VS Code Side Sidebar (Explorer tree / Git view etc) */}
-        <div className="w-64 bg-[#252526] flex flex-col border-r border-[#2b2b2b]">
-          <div className="p-3 text-[11px] font-bold uppercase tracking-wider text-[#969696] flex items-center justify-between">
-            <span>{sidebarView}</span>
-            <div className="flex items-center gap-1">
-              <span
-                title="New File"
-                onClick={() => setShowNewFileInput({ type: 'file', path: '/' })}
-              >
-                <Plus className="h-3 w-3 cursor-pointer hover:bg-[#37373d] rounded" />
-              </span>
-              <span
-                title="New Folder"
-                onClick={() => setShowNewFileInput({ type: 'folder', path: '/' })}
-              >
-                <FolderGit2 className="h-3 w-3 cursor-pointer hover:bg-[#37373d] rounded" />
-              </span>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-auto">
-            {sidebarView === 'explorer' && (
-              <div className="p-2 pt-0">
-                <h3 className="px-2 py-1 text-[11px] font-bold text-[#cccccc] flex items-center gap-1 group cursor-pointer hover:bg-[#37373d]">
-                  <ChevronRight className="h-3 w-3" />
-                  {currentWorkspace?.name?.toUpperCase()}
-                </h3>
-
-                {showNewFileInput && (
-                  <div className="px-2 py-1 flex items-center gap-2 bg-[#37373d] border border-purple-500 my-1">
-                    {showNewFileInput.type === 'file' ? <File className="h-3 w-3 text-blue-400" /> : <FolderGit2 className="h-3 w-3 text-yellow-500" />}
-                    <Input
-                      autoFocus
-                      className="h-5 bg-transparent border-none text-[11px] p-0 focus-visible:ring-0 text-white flex-1"
-                      value={newItemName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewItemName(e.target.value)}
-                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === 'Enter') handleCreateItem();
-                        if (e.key === 'Escape') {
-                          setShowNewFileInput(null);
-                          setNewItemName('');
-                        }
-                      }}
-                      onBlur={() => {
-                        if (!newItemName) setShowNewFileInput(null);
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div className="mt-1">
-                  <FileTree
-                    files={buildFileTree(currentWorkspace?.files || [])}
-                    currentUser={session?.user?.username || ''}
-                    onSelectFile={setSelectedFile}
-                    selectedPath={selectedFile}
-                    onNewFile={(path) => setShowNewFileInput({ type: 'file', path })}
-                    onNewFolder={(path) => setShowNewFileInput({ type: 'folder', path })}
-                  />
-                </div>
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Main Content (Iframe or Start Button) */}
+        <div className="flex-1 bg-[#1e1e1e] flex flex-col relative">
+          {sessionUrl ? (
+            <>
+              <div className="absolute top-2 right-4 z-10 opacity-50 hover:opacity-100 transition-opacity">
+                <a href={sessionUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-white bg-black/50 px-2 py-1 rounded hover:bg-black/80">
+                  <ExternalLink className="h-3 w-3" /> Open in Browser
+                </a>
               </div>
-            )}
-
-            {sidebarView === 'git' && (
-              <div className="p-4">
-                <GitPanel
-                  workspaceId={currentWorkspaceId!}
-                  repoUrl={currentWorkspace?.gitRepoUrl || ''}
-                  branch={currentWorkspace?.gitBranch || ''}
-                  status={currentWorkspace?.status || ''}
-                  isLeader={isLeader}
-                  onPushToGit={handlePushToGit}
-                  onPullFromGit={handlePullFromGit}
-                  onDeleteWorkspace={handleDeleteWorkspace}
-                />
-              </div>
-            )}
-
-            {sidebarView === 'members' && (
-              <div className="h-full">
-                <MemberList members={currentWorkspace?.members || []} currentUserId={session?.user?.id || ''} />
-              </div>
-            )}
-
-            {sidebarView === 'search' && (
-              <div className="p-4 text-center text-xs text-[#858585]">
-                Global search functionality coming soon.
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* VS Code Main Editor Area */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#1e1e1e]">
-          {/* Editor Tabs bar */}
-          <div className="h-9 bg-[#252526] flex items-center overflow-x-auto scrollbar-hide border-b border-[#2b2b2b]">
-            {selectedFile ? (
-              <div className="h-full flex items-center px-4 gap-2 bg-[#1e1e1e] border-t border-t-purple-500 text-sm text-[#cccccc] min-w-[120px]">
-                <File className="h-3 w-3 text-blue-400" />
-                <span className="truncate">{selectedFile.split('/').pop()}</span>
-                <X className="h-3 w-3 ml-2 hover:bg-[#323233] p-0.5 rounded cursor-pointer" onClick={() => setSelectedFile(null)} />
-              </div>
-            ) : (
-              <div className="px-4 text-xs text-[#858585] italic">No file open</div>
-            )}
-          </div>
-
-          <div className="flex-1 flex flex-col relative overflow-hidden">
-            {selectedFile ? (
-              <MonacoYjsEditor
-                workspaceId={currentWorkspaceId!.toString()}
-                userId={session?.user?.id || ''}
-                username={session?.user?.username || ''}
-                filePath={selectedFile}
-                initialContent={currentWorkspace?.files?.find((f: any) => f.filePath === selectedFile)?.content || "// Start coding..."}
-                language="typescript"
-                isLocked={false}
-                lockedBy={null}
-                onSave={handleSaveFile}
-                onAcquireLock={handleAcquireLock}
-                onReleaseLock={handleReleaseLock}
+              <iframe
+                src={sessionUrl}
+                className="w-full h-full border-none bg-white"
+                title="Workspace Editor"
+                allow="clipboard-read; clipboard-write;"
               />
-            ) : (
-              <div className="flex-1 rounded-none flex flex-col items-center justify-center text-[#454545] space-y-6">
-                <Code2 className="h-32 w-32 opacity-10" />
-                <div className="text-center space-y-2">
-                  <p className="text-sm font-medium">Select a file from the explorer to start coding</p>
-                  <div className="flex flex-col gap-2 text-xs opacity-60">
-                    <p>Search Everywhere: <span className="bg-[#3c3c3c] px-1 rounded ml-1">Ctrl+P</span></p>
-                    <p>Command Palette: <span className="bg-[#3c3c3c] px-1 rounded ml-1">Ctrl+Shift+P</span></p>
-                    <p>New Collaboration: <span className="bg-[#3c3c3c] px-1 rounded ml-1">Ctrl+K</span></p>
-                  </div>
-                </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center space-y-6">
+              <div className="text-center space-y-2">
+                <Code2 className="h-24 w-24 mx-auto text-purple-500/20" />
+                <h2 className="text-2xl font-bold text-white">Ready to Code?</h2>
+                <p className="text-gray-400 max-w-sm">Start the Cloud Environment to launch VS Code directly in your browser.</p>
               </div>
-            )}
-          </div>
+              <Button
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white font-bold px-8"
+                onClick={handleStartSession}
+                disabled={isStarting}
+              >
+                {isStarting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Starting Container...
+                  </>
+                ) : (
+                  <>
+                    <Code2 className="mr-2 h-5 w-5" /> Start Workspace
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Right VS Code Sidebar (Chat/Voice) */}
+        {/* Right Chat Sidebar */}
         <div className={cn(
-          "w-80 bg-[#252526] border-l border-[#2b2b2b] flex flex-col transition-all duration-300",
-          !showChat && "w-0 overflow-hidden border-l-0"
+          "w-80 bg-[#252526] border-l border-[#2b2b2b] flex flex-col transition-all duration-300 absolute right-0 top-0 bottom-0 z-50 shadow-2xl",
+          !showChat && "w-0 overflow-hidden border-l-0 translate-x-full"
         )}>
           <div className="p-3 bg-[#323233] border-b border-[#2b2b2b] flex items-center justify-between text-xs font-bold uppercase tracking-wider text-[#969696]">
             <div className="flex items-center gap-2">
@@ -756,48 +626,24 @@ export const WorkspaceContainer: React.FC = () => {
               sendIceCandidate={sendIceCandidate}
               incomingCall={incomingCall}
               activeCallData={activeCallData}
+              members={currentWorkspace?.members?.map((m: any) => ({
+                ...m,
+                username: m.user?.username || m.username || 'Unknown',
+                isOnline: m.isOnline // Ensure other fields are preserved
+              })) || []}
             />
           </div>
         </div>
 
-        {/* Small floating chat toggle if closed */}
+        {/* Floating Chat Toggle */}
         {!showChat && (
           <Button
-            className="fixed right-6 bottom-6 h-12 w-12 rounded-full shadow-2xl bg-purple-600 hover:bg-purple-700 z-50 p-0"
+            className="absolute right-6 bottom-6 h-12 w-12 rounded-full shadow-2xl bg-purple-600 hover:bg-purple-700 z-50 p-0"
             onClick={() => setShowChat(true)}
           >
             <MessageSquare className="h-6 w-6 text-white" />
           </Button>
         )}
-      </div>
-
-      {/* VS Code Bottom Status Bar */}
-      <div className="h-6 bg-[#007acc] text-white flex items-center justify-between px-3 text-[11px] select-none shrink-0 font-medium">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
-            <GitBranch className="h-3 w-3" />
-            <span>{currentWorkspace?.gitBranch || 'main'}*</span>
-          </div>
-          <div className="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
-            <Circle className={cn("h-2.5 w-2.5 fill-white", wsConnected ? "text-green-300" : "text-red-300")} />
-            <span>{wsConnected ? 'WebSocket Connected' : 'Connecting...'}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 h-full">
-          <div className="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
-            <span>UTF-8</span>
-          </div>
-          <div className="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
-            <span>TypeScript JSX</span>
-          </div>
-          <div className="flex items-center gap-1 hover:bg-white/10 px-2 h-full cursor-pointer">
-            <Video className="h-3 w-3" />
-            <span>Go Live</span>
-          </div>
-          <div className="flex items-center gap-1 hover:bg-white/10 px-1.5 h-full cursor-pointer">
-            <Trophy className="h-3 w-3" />
-          </div>
-        </div>
       </div>
     </div>
   );

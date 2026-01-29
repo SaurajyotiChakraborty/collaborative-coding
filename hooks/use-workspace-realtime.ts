@@ -10,7 +10,7 @@ interface UseWorkspaceRealtimeProps {
   username: string;
   enabled?: boolean;
   onEvent?: (event: WorkspaceEvent) => void;
-  onCallEvent?: (data: { type: string; from: string; username?: string; payload: any }) => void;
+  onCallEvent?: (data: { type: string; from: string; username?: string; offer?: any; payload?: any }) => void;
   onChatMessage?: (chat: { userId: string; username: string; message: string; timestamp: number }) => void;
 }
 
@@ -64,7 +64,7 @@ export function useWorkspaceRealtime({
       },
       onEvent: (event: WorkspaceEvent) => {
         if (event.type === 'incoming_call' as any) {
-          onCallEvent?.({ type: 'offer', from: event.userId, username: (event as any).username, payload: event.data.offer });
+          onCallEvent?.({ type: 'offer', from: event.userId, username: (event as any).username, offer: event.data.offer });
         } else if (event.type === 'call_accepted' as any) {
           onCallEvent?.({ type: 'answer', from: event.userId, payload: event.data.answer });
         } else if (event.type === 'ice_candidate' as any) {

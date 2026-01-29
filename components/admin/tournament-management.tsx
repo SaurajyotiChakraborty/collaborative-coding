@@ -23,6 +23,9 @@ export function TournamentManagement() {
     const [description, setDescription] = useState('');
     const [startDate, setStartDate] = useState('');
     const [startTime, setStartTime] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [badgeTitle, setBadgeTitle] = useState('');
     const [selectedQuestionIds, setSelectedQuestionIds] = useState<number[]>([]);
     const [maxParticipants, setMaxParticipants] = useState(100);
 
@@ -47,20 +50,30 @@ export function TournamentManagement() {
     }, []);
 
     const handleCreateTournament = async () => {
-        if (!title || !startDate || !startTime || selectedQuestionIds.length === 0) {
+        if (!title || !startDate || !startTime || !endDate || !endTime || selectedQuestionIds.length === 0) {
             toast.error('Please fill in all required fields');
             return;
         }
 
         setIsCreating(true);
         try {
-            const combinedDateTime = new Date(`${startDate}T${startTime}`);
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+
+            if (endDateTime <= startDateTime) {
+                toast.error('End time must be after start time');
+                setIsCreating(false);
+                return;
+            }
+
             const res = await createTournament({
                 title,
                 description,
-                startTime: combinedDateTime,
+                startTime: startDateTime,
+                endTime: endDateTime,
                 questionIds: selectedQuestionIds,
-                maxParticipants
+                maxParticipants,
+                badgeTitle: badgeTitle || undefined
             });
 
             if (res.success) {
@@ -69,6 +82,9 @@ export function TournamentManagement() {
                 setDescription('');
                 setStartDate('');
                 setStartTime('');
+                setEndDate('');
+                setEndTime('');
+                setBadgeTitle('');
                 setSelectedQuestionIds([]);
                 fetchData();
             } else {
@@ -97,7 +113,7 @@ export function TournamentManagement() {
                             <Plus className="h-5 w-5 text-purple-600" />
                             Schedule New Tournament
                         </CardTitle>
-                        <CardDescription>set date, time and selected challenges</CardDescription>
+                        <CardDescription>set date, time, badge and selected challenges</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
@@ -116,6 +132,7 @@ export function TournamentManagement() {
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Start Date</Label>
@@ -134,6 +151,36 @@ export function TournamentManagement() {
                                 />
                             </div>
                         </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>End Date</Label>
+                                <Input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>End Time</Label>
+                                <Input
+                                    type="time"
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Winner Badge Title (Optional)</Label>
+                            <Input
+                                placeholder="e.g. 'Algorithm Master 2024'"
+                                value={badgeTitle}
+                                onChange={(e) => setBadgeTitle(e.target.value)}
+                            />
+                            <p className="text-[10px] text-muted-foreground">This badge will be awarded to the top 3 winners</p>
+                        </div>
+
                         <div className="space-y-2">
                             <Label>Question Pool</Label>
                             <div className="border rounded-lg p-2 max-h-40 overflow-y-auto space-y-1">

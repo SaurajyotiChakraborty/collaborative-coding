@@ -62,10 +62,41 @@ enum AppealStatus {
   Rejected
 }
 
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
 model User {
   id                      String   @id @default(uuid()) // Identity replacement
   username                String   @unique
   email                   String   @unique
+  emailVerified           DateTime?
   password                String?  // Optional: for credentials auth, null for OAuth-only users
   role                    UserRole @default(User)
   rating                  Int      @default(1200)
@@ -79,6 +110,9 @@ model User {
   // Dynamic Progress Tracking
   learningPathProgress    UserLearningPath[]
   achievementsUnlocked    UserAchievement[]
+  
+  accounts                Account[]
+  sessions                Session[]
 
   createdQuestions        Question[]
   createdCompetitions     Competition[]
@@ -165,6 +199,7 @@ model Competition {
   status              CompetitionStatus @default(Waiting)
   hasTimeLimit        Boolean           @default(false)
   timeLimitMinutes    Int?
+  badgeTitle          String?
   
   createdById         String
   createdBy           User              @relation(fields: [createdById], references: [id])

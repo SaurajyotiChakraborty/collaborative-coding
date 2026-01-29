@@ -286,13 +286,39 @@ export async function endCompetition(competitionId: number) {
             .sort((a, b) => b.finalScore - a.finalScore)
 
         // Update competition
-        await prisma.competition.update({
+        const updatedCompetition = await prisma.competition.update({
             where: { id: competitionId },
             data: {
                 status: 'Completed',
                 endTime: new Date()
             }
-        })
+        });
+
+        // Handle Badge Awarding
+        let badgeId: string | null = null;
+        const compAny = updatedCompetition as any;
+        if (compAny.badgeTitle) {
+            // Check if achievement exists
+            const existingAchievement = await prisma.achievement.findFirst({
+                where: { name: compAny.badgeTitle }
+            });
+
+            if (existingAchievement) {
+                badgeId = existingAchievement.id;
+            } else {
+                // Create new achievement
+                const newAchievement = await prisma.achievement.create({
+                    data: {
+                        name: compAny.badgeTitle,
+                        description: `Awarded for top performance in ${updatedCompetition.title}`,
+                        icon: '🏆', // Default trophy icon
+                        requirementType: 'TournamentWin',
+                        requirementValue: 1
+                    }
+                });
+                badgeId = newAchievement.id;
+            }
+        }
 
         // Update user stats, leaderboard, and send notifications
         for (let i = 0; i < rankings.length; i++) {
@@ -339,6 +365,31 @@ export async function endCompetition(competitionId: number) {
                 message: `Competition #${competitionId} results: You placed #${i + 1} with ${ranking.finalScore.toFixed(0)} points!`,
                 competitionId: competitionId
             })
+
+            // Award Badge if applicable (Top 3)
+            if (badgeId && i < 3) {
+                await prisma.userAchievement.upsert({
+                    where: {
+                        userId_achievementId: {
+                            userId: ranking.userId,
+                            achievementId: badgeId
+                        }
+                    },
+                    create: {
+                        userId: ranking.userId,
+                        achievementId: badgeId
+                    },
+                    update: {} // No update needed if already owns
+                });
+
+                // Notify about badge
+                await createNotification({
+                    userId: ranking.userId,
+                    type: 'Result', // Or a new 'Achievement' type if available, reusing Result for now
+                    message: `You unlocked a new badge: ${compAny.badgeTitle}!`,
+                    competitionId: competitionId
+                });
+            }
         }
 
         // Recalculate all ranks

@@ -50,10 +50,12 @@ export const authOptions: NextAuthOptions = {
         GithubProvider({
             clientId: process.env.GITHUB_CLIENT_ID || '',
             clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+            allowDangerousEmailAccountLinking: true,
         }),
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || '',
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+            allowDangerousEmailAccountLinking: true,
         }),
     ],
     callbacks: {
@@ -101,40 +103,6 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
         async signIn({ user, account, profile }) {
-            // For OAuth providers, check if user exists, if not create with default values
-            if (account?.provider !== 'credentials' && user.email) {
-                const existingUser = await prisma.user.findUnique({
-                    where: { email: user.email },
-                });
-
-                if (!existingUser) {
-                    // Create new user with username from email or profile
-                    const username = (profile as any)?.login || user.email.split('@')[0];
-                    const newUser = await prisma.user.create({
-                        data: {
-                            id: user.id,
-                            email: user.email,
-                            username: username,
-                            role: 'User',
-                        },
-                    });
-
-                    // Update user object with created user data
-                    user.username = newUser.username;
-                    user.role = newUser.role;
-                    user.rating = newUser.rating;
-                    user.xp = newUser.xp.toString();
-                    user.isCheater = newUser.isCheater;
-                } else {
-                    // For existing OAuth users, populate user object with database values
-                    user.id = existingUser.id;
-                    user.username = existingUser.username;
-                    user.role = existingUser.role;
-                    user.rating = existingUser.rating;
-                    user.xp = existingUser.xp.toString();
-                    user.isCheater = existingUser.isCheater;
-                }
-            }
             return true;
         },
     },
