@@ -1,146 +1,162 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Check, X } from 'lucide-react';
+import { Bell, Check, Info, Trophy, Swords } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '@/app/actions/notification';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface Notification {
     id: number;
-    type: string;
+    type: 'ChallengeRequest' | 'CompetitionStart' | 'Result';
     message: string;
+    competitionId?: number | null;
     isRead: boolean;
     createdAt: Date;
-    competitionId?: number;
 }
 
 export function NotificationBell({ userId }: { userId: string }) {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
+
+    const fetchNotifications = async () => {
+        const result = await getNotifications(userId);
+        if (result.success && result.notifications) {
+            setNotifications(result.notifications);
+            setUnreadCount(result.notifications.filter(n => !n.isRead).length);
+        }
+    };
 
     useEffect(() => {
-        loadNotifications();
-
-        // Poll for new notifications every 30 seconds
-        const interval = setInterval(loadNotifications, 30000);
+        fetchNotifications();
+        // Poll every 30 seconds
+        const interval = setInterval(fetchNotifications, 30000);
         return () => clearInterval(interval);
     }, [userId]);
 
-    const loadNotifications = async () => {
-        const result = await getNotifications(userId);
-        if (result.success && result.notifications) {
-            setNotifications(result.notifications as any);
-            setUnreadCount(result.notifications.filter((n: any) => !n.isRead).length);
+    const handleMarkRead = async (id: number) => {
+        const result = await markNotificationRead(id);
+        if (result.success) {
+            setNotifications(prev =>
+                prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
+            );
+            setUnreadCount(prev => Math.max(0, prev - 1));
         }
-    };
-
-    const handleMarkRead = async (notificationId: number) => {
-        await markNotificationRead(notificationId);
-        loadNotifications();
     };
 
     const handleMarkAllRead = async () => {
-        await markAllNotificationsRead(userId);
-        loadNotifications();
-    };
-
-    const getNotificationIcon = (type: string) => {
-        switch (type) {
-            case 'ChallengeRequest':
-                return '🎯';
-            case 'CompetitionStart':
-                return '🚀';
-            case 'Result':
-                return '🏆';
-            default:
-                return '📢';
+        const result = await markAllNotificationsRead(userId);
+        if (result.success) {
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+            setUnreadCount(0);
+            toast.success('All notifications marked as read');
         }
     };
 
-    const formatTime = (date: Date) => {
-        const now = new Date();
-        const diff = now.getTime() - new Date(date).getTime();
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
+    const handleNotificationClick = async (notification: Notification) => {
+        if (!notification.isRead) {
+            await handleMarkRead(notification.id);
+        }
 
-        if (days > 0) return `${days}d ago`;
-        if (hours > 0) return `${hours}h ago`;
-        if (minutes > 0) return `${minutes}m ago`;
-        return 'Just now';
+        if (notification.competitionId) {
+            router.push(`/compete/${notification.competitionId}`);
+            setIsOpen(false);
+        }
+    };
+
+    const getIcon = (type: Notification['type']) => {
+        switch (type) {
+            case 'ChallengeRequest':
+                return <Swords className="h-4 w-4 text-blue-500" />;
+            case 'CompetitionStart':
+                return <Info className="h-4 w-4 text-purple-500" />;
+            case 'Result':
+                return <Trophy className="h-4 w-4 text-yellow-500" />;
+            default:
+                return <Info className="h-4 w-4" />;
+        }
     };
 
     return (
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <PopoverTrigger asChild>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
+                    <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     {unreadCount > 0 && (
                         <Badge
-                            variant="destructive"
-                            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 hover:bg-red-600 border-none"
                         >
                             {unreadCount > 9 ? '9+' : unreadCount}
                         </Badge>
                     )}
                 </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-0" align="end">
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h3 className="font-semibold">Notifications</h3>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+                <div className="flex items-center justify-between px-4 py-2 border-b">
+                    <span className="font-semibold text-sm">Notifications</span>
                     {unreadCount > 0 && (
                         <Button
                             variant="ghost"
                             size="sm"
+                            className="h-auto p-0 text-xs text-muted-foreground hover:text-primary"
                             onClick={handleMarkAllRead}
-                            className="text-xs"
                         >
-                            <Check className="h-3 w-3 mr-1" />
                             Mark all read
                         </Button>
                     )}
                 </div>
-                <ScrollArea className="h-[400px]">
+                <ScrollArea className="h-[300px]">
                     {notifications.length === 0 ? (
-                        <div className="p-8 text-center text-muted-foreground">
-                            <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                            <p>No notifications</p>
+                        <div className="p-4 text-center text-sm text-muted-foreground">
+                            No notifications yet
                         </div>
                     ) : (
-                        <div className="divide-y">
+                        <div className="flex flex-col gap-1 p-1">
                             {notifications.map((notification) => (
-                                <div
+                                <DropdownMenuItem
                                     key={notification.id}
-                                    className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${!notification.isRead ? 'bg-purple-50 dark:bg-purple-900/20' : ''
-                                        }`}
-                                    onClick={() => handleMarkRead(notification.id)}
+                                    className={cn(
+                                        "flex flex-col gap-1 p-3 cursor-pointer items-start",
+                                        !notification.isRead && "bg-muted/50"
+                                    )}
+                                    onClick={() => handleNotificationClick(notification)}
                                 >
-                                    <div className="flex items-start gap-3">
-                                        <span className="text-2xl">{getNotificationIcon(notification.type)}</span>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium">{notification.message}</p>
-                                            <p className="text-xs text-muted-foreground mt-1">
-                                                {formatTime(notification.createdAt)}
+                                    <div className="flex items-start gap-3 w-full">
+                                        <div className="mt-1 shrink-0">
+                                            {getIcon(notification.type)}
+                                        </div>
+                                        <div className="flex-1 space-y-1">
+                                            <p className={cn("text-sm leading-none", !notification.isRead && "font-medium")}>
+                                                {notification.message}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {new Date(notification.createdAt).toLocaleDateString()} at {new Date(notification.createdAt).toLocaleTimeString()}
                                             </p>
                                         </div>
                                         {!notification.isRead && (
-                                            <div className="h-2 w-2 bg-purple-600 rounded-full mt-2" />
+                                            <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0 mt-1" />
                                         )}
                                     </div>
-                                </div>
+                                </DropdownMenuItem>
                             ))}
                         </div>
                     )}
                 </ScrollArea>
-            </PopoverContent>
-        </Popover>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

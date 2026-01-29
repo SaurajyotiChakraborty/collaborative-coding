@@ -25,13 +25,18 @@ import {
     Bot
 } from 'lucide-react';
 import { getPracticeQuestion } from '@/app/actions/practice';
+import { submitCode } from '@/app/actions/submission';
+import { useLingoContext } from '@lingo.dev/compiler/react';
+import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
 
 interface PracticeArenaProps {
     questionId: number;
+    pathId?: string;
     onBack: () => void;
+    onComplete?: () => void;
 }
 
 const MOTIVATIONAL_QUOTES = [
@@ -43,7 +48,8 @@ const MOTIVATIONAL_QUOTES = [
     "Efficiency is doing things right; effectiveness is doing the right things."
 ];
 
-export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
+export function PracticeArena({ questionId, pathId, onBack, onComplete }: PracticeArenaProps) {
+    const { data: session } = useSession();
     const [question, setQuestion] = useState<any>(null);
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState(true);
@@ -54,12 +60,13 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
     const [activeResultTab, setActiveResultTab] = useState<string>('problem');
     const [showSolution, setShowSolution] = useState(false);
     const [quote] = useState(() => MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]);
+    const { locale } = useLingoContext();
 
     useEffect(() => {
         const fetchQuestion = async () => {
             setLoading(true);
             try {
-                const result = await getPracticeQuestion(questionId);
+                const result = await getPracticeQuestion(questionId, locale);
                 if (result.success && result.question) {
                     setQuestion(result.question);
                     // Set default code template based on the language (simplified)
@@ -101,6 +108,7 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                 setTestResults(result);
                 if (result.allPassed) {
                     toast.success('All test cases passed!');
+                    handleSaveSubmission(true, null);
                 } else {
                     toast.error(`${result.failedCount} test cases failed`);
                 }
@@ -113,6 +121,22 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
         } finally {
             setExecuting(false);
         }
+    };
+
+    const handleSaveSubmission = async (allPassed: boolean, complexity: any) => {
+        if (!session?.user?.id) return;
+
+        await submitCode({
+            userId: session.user.id,
+            competitionId: 0, // 0 or null for practice
+            questionId: questionId,
+            code,
+            language: 'javascript',
+            timeComplexity: complexity?.timeComplexity || 'Unknown',
+            spaceComplexity: complexity?.spaceComplexity || 'Unknown',
+            allTestsPassed: allPassed,
+            executionTimeMs: testResults?.totalTime || 0
+        });
     };
 
     const handleSubmit = async () => {
@@ -447,6 +471,15 @@ export function PracticeArena({ questionId, onBack }: PracticeArenaProps) {
                                                         <Badge className="bg-green-500">Master Optimizer</Badge>
                                                         <Badge variant="outline" className="border-green-500 text-green-600">+250 XP earned</Badge>
                                                     </div>
+                                                    {pathId && onComplete && (
+                                                        <Button
+                                                            onClick={onComplete}
+                                                            className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                                                        >
+                                                            Next Challenge
+                                                            <ChevronRight className="ml-2 h-5 w-5" />
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <div className="p-6 rounded-2xl border border-dashed border-purple-400 space-y-4 bg-purple-50/50 dark:bg-purple-900/10">

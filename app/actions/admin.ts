@@ -127,3 +127,44 @@ export async function getQuestionStats() {
         return { success: false, error: 'Failed to fetch question stats' }
     }
 }
+export async function getBanAppeals() {
+    try {
+        const appeals = await prisma.banAppeal.findMany({
+            include: { user: { select: { username: true, email: true } } },
+            orderBy: { createdAt: 'desc' }
+        });
+        return { success: true, appeals };
+    } catch (error) {
+        return { success: false, error: 'Failed to fetch appeals' };
+    }
+}
+
+export async function resolveBanAppeal(appealId: number, status: 'Approved' | 'Rejected', adminNotes?: string) {
+    try {
+        const appeal = await prisma.banAppeal.update({
+            where: { id: appealId },
+            data: {
+                status,
+                adminNotes,
+                resolvedAt: new Date()
+            }
+        });
+
+        if (status === 'Approved') {
+            await unbanUser(appeal.userId);
+        } else {
+            // Notify user of rejection
+            await prisma.notification.create({
+                data: {
+                    userId: appeal.userId,
+                    type: 'Result',
+                    message: `Your ban appeal was rejected. Admin notes: ${adminNotes || 'No additional information.'}`
+                }
+            });
+        }
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: 'Failed to resolve appeal' };
+    }
+}

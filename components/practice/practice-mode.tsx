@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Code2, GraduationCap, Lightbulb, Target, Calendar, Zap, GitCompare } from 'lucide-react';
-import { getLearningPaths } from '@/app/actions/practice';
-import { getDailyChallenges, generateDailyChallenges } from '@/app/actions/daily-challenge';
+import { getLearningPaths, getPracticeQuestions, getRandomQuestion } from '@/app/actions/practice';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface PracticeModeProps {
   onStartPractice: (questionId: bigint) => void;
@@ -18,7 +19,7 @@ interface PracticeModeProps {
 export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps) {
   const { data: session } = useSession();
   const [learningPaths, setLearningPaths] = useState<any[]>([]);
-  const [dailyChallenges, setDailyChallenges] = useState<any[]>([]);
+  const [practiceQuestions, setPracticeQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -26,24 +27,17 @@ export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [pathsRes, dailyRes] = await Promise.all([
+        const [pathsRes, practiceRes] = await Promise.all([
           getLearningPaths(session?.user?.id),
-          getDailyChallenges()
+          getPracticeQuestions()
         ]);
 
         if (pathsRes.success && pathsRes.learningPaths) {
           setLearningPaths(pathsRes.learningPaths);
         }
 
-        if (dailyRes.success && dailyRes.challenges) {
-          setDailyChallenges(dailyRes.challenges);
-        } else {
-          // Generate if none exist for today
-          await generateDailyChallenges();
-          const retryDaily = await getDailyChallenges();
-          if (retryDaily.success && retryDaily.challenges) {
-            setDailyChallenges(retryDaily.challenges);
-          }
+        if (practiceRes.success && practiceRes.questions) {
+          setPracticeQuestions(practiceRes.questions);
         }
       } catch (error) {
         console.error('Failed to fetch practice data:', error);
@@ -91,47 +85,46 @@ export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps
         <CardDescription>Master algorithms with structured learning paths</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="daily" className="space-y-6">
+        <Tabs defaultValue="individual" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="daily">Daily Challenges</TabsTrigger>
+            <TabsTrigger value="individual">Individual Challenges</TabsTrigger>
             <TabsTrigger value="paths">Learning Paths</TabsTrigger>
             <TabsTrigger value="random">Random Practice</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="daily" className="space-y-4">
-            <div className="grid gap-4">
-              {dailyChallenges.map((q, idx) => (
-                <Card key={q.id} className="border-purple-200/50 dark:border-purple-800/50 overflow-hidden relative">
-                  <div className="absolute top-0 right-0 p-3">
-                    <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
-                      {idx === 0 ? 'Easy' : idx === 1 ? 'Medium' : 'Hard'}
-                    </Badge>
-                  </div>
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
-                        <Zap className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{q.title}</CardTitle>
-                        <div className="flex gap-2 mt-1">
-                          {q.tags.slice(0, 3).map((t: string) => (
-                            <span key={t} className="text-[10px] text-muted-foreground">#{t}</span>
-                          ))}
-                        </div>
-                      </div>
+          <TabsContent value="individual" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              {practiceQuestions.length > 0 ? practiceQuestions.map((q) => (
+                <Card key={q.id} className="border-purple-200/50 dark:border-purple-800/50 hover:border-purple-400 transition-colors">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-md font-bold">{q.title}</CardTitle>
+                      <Badge variant="outline" className="text-[10px]">
+                        {q.difficulty}
+                      </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground line-clamp-1 max-w-[70%]">
+                  <CardContent>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
                       {q.description}
                     </p>
-                    <Button size="sm" onClick={() => onStartPractice(BigInt(q.id))} className="bg-gradient-to-r from-purple-600 to-pink-600">
-                      Solve Now
-                    </Button>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-1">
+                        {q.tags?.slice(0, 2).map((t: string) => (
+                          <span key={t} className="text-[8px] px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">#{t}</span>
+                        ))}
+                      </div>
+                      <Button size="sm" variant="ghost" className="text-purple-600 hover:text-purple-700" onClick={() => onStartPractice(BigInt(q.id))}>
+                        Practice Now
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
+              )) : (
+                <div className="col-span-2 text-center py-12 text-muted-foreground bg-gray-50 dark:bg-gray-900/50 rounded-xl border-dashed border-2 border-gray-200 dark:border-gray-800">
+                  No individual practice challenges available at the moment.
+                </div>
+              )}
             </div>
           </TabsContent>
 
@@ -206,27 +199,28 @@ export function PracticeMode({ onStartPractice, onStartPath }: PracticeModeProps
                   Get a random question to sharpen your skills without pressure
                 </p>
                 <div className="grid grid-cols-3 gap-2 pt-4">
-                  <Button
-                    onClick={() => onStartPractice(BigInt(Math.floor(Math.random() * 100)))}
-                    variant="outline"
-                    className="border-green-500 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
-                  >
-                    Easy
-                  </Button>
-                  <Button
-                    onClick={() => onStartPractice(BigInt(Math.floor(Math.random() * 100)))}
-                    variant="outline"
-                    className="border-yellow-500 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
-                  >
-                    Medium
-                  </Button>
-                  <Button
-                    onClick={() => onStartPractice(BigInt(Math.floor(Math.random() * 100)))}
-                    variant="outline"
-                    className="border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                  >
-                    Hard
-                  </Button>
+                  {['Easy', 'Medium', 'Hard'].map((diff) => (
+                    <Button
+                      key={diff}
+                      onClick={async () => {
+                        const res = await getRandomQuestion(diff);
+                        if (res.success && res.question) {
+                          onStartPractice(BigInt(res.question.id));
+                        } else {
+                          toast.error(res.error || 'Failed to find a question');
+                        }
+                      }}
+                      variant="outline"
+                      className={cn(
+                        "border-2",
+                        diff === 'Easy' && "border-green-500 text-green-600 hover:bg-green-50",
+                        diff === 'Medium' && "border-yellow-500 text-yellow-600 hover:bg-yellow-50",
+                        diff === 'Hard' && "border-red-500 text-red-600 hover:bg-red-50"
+                      )}
+                    >
+                      {diff}
+                    </Button>
+                  ))}
                 </div>
               </CardContent>
             </Card>

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { submitCode } from '@/app/actions/submission';
+import { saveLiveDraft } from '@/app/actions/live-draft';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
@@ -25,8 +26,33 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
   const [tabSwitchCount, setTabSwitchCount] = useState<number>(0);
   const [pasteDetected, setPasteDetected] = useState<boolean>(false);
   const visibilityRef = useRef<boolean>(true);
+  const draftTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentQuestion = questions[currentQuestionIndex];
+
+  // Debounced function to save draft for spectators
+  const saveDraft = useCallback((newCode: string, lang: string) => {
+    if (!session?.user?.id) return;
+
+    // Clear any existing timeout
+    if (draftTimeoutRef.current) {
+      clearTimeout(draftTimeoutRef.current);
+    }
+
+    // Debounce: save after 300ms of no typing
+    draftTimeoutRef.current = setTimeout(async () => {
+      try {
+        await saveLiveDraft({
+          competitionId: Number(competitionId),
+          userId: session.user.id,
+          code: newCode,
+          language: lang
+        });
+      } catch (error) {
+        console.error('Failed to sync draft:', error);
+      }
+    }, 300);
+  }, [session?.user?.id, competitionId]);
 
   useEffect(() => {
     const handleVisibilityChange = (): void => {
@@ -49,7 +75,9 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
   }, [tabSwitchCount]);
 
   const handleEditorChange = (value: string | undefined): void => {
-    setCode(value || '');
+    const newCode = value || '';
+    setCode(newCode);
+    saveDraft(newCode, language);
   };
 
   const handlePaste = (): void => {

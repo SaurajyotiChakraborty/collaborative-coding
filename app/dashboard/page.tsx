@@ -8,12 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Zap, User, Target, Share2, Award, Users, Bot, Gift, Code, Eye, Video, Settings } from 'lucide-react';
 import { SideNav } from '@/components/layout/side-nav';
+import { ModernHeader } from '@/components/layout/modern-header';
 import { WorkspaceContainer } from '@/components/workspace/workspace-container';
 import { CompeteContainer } from '@/components/dashboard/compete-container';
 import { LeaderboardView } from '@/components/leaderboard/leaderboard-view';
 import { VideoReplay } from '@/components/replay/video-replay';
 import { SpectatorView } from '@/components/spectator/spectator-view';
 import { PracticeMode } from '@/components/practice/practice-mode';
+import { PathNavigator } from '@/components/practice/path-navigator';
 import { PracticeArena } from '@/components/practice/practice-arena';
 import { PerformanceAnalytics } from '@/components/analytics/performance-analytics';
 import { getUserAnalytics } from '@/app/actions/analytics';
@@ -22,6 +24,7 @@ import { BarChart as BarChartIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminPanel } from '@/components/admin/admin-panel';
 import { BannedView } from '@/components/shared/banned-view';
+import { TournamentView } from '@/components/dashboard/tournament-view';
 
 // Sub-components for better hook isolation
 const AchievementsContent = () => (
@@ -174,6 +177,7 @@ export default function DashboardPage() {
     const [analyticsData, setAnalyticsData] = useState<UserAnalytics | null>(null);
     const [loadingAnalytics, setLoadingAnalytics] = useState(false);
     const [selectedPracticeQuestion, setSelectedPracticeQuestion] = useState<number | null>(null);
+    const [selectedPath, setSelectedPath] = useState<any | null>(null);
 
     useEffect(() => {
         if (activeTab === 'analytics' && !analyticsData && session?.user?.id) {
@@ -241,22 +245,35 @@ export default function DashboardPage() {
                 return (
                     <PracticeArena
                         questionId={selectedPracticeQuestion}
-                        onBack={() => setSelectedPracticeQuestion(null)}
+                        pathId={selectedPath?.id}
+                        onBack={() => {
+                            setSelectedPracticeQuestion(null);
+                        }}
+                        onComplete={() => {
+                            // Logic to find next question would be in PathNavigator or we can just go back to navigator
+                            setSelectedPracticeQuestion(null);
+                            toast.success('Challenge completed!');
+                        }}
+                    />
+                );
+            }
+            if (selectedPath) {
+                return (
+                    <PathNavigator
+                        pathId={selectedPath.id}
+                        onBack={() => {
+                            setSelectedPath(null);
+                        }}
+                        onStartQuestion={(qId) => {
+                            setSelectedPracticeQuestion(Number(qId));
+                        }}
                     />
                 );
             }
             return (
                 <PracticeMode
                     onStartPractice={(qId) => setSelectedPracticeQuestion(Number(qId))}
-                    onStartPath={(path) => {
-                        const firstQuestionId = path.questions[0];
-                        if (firstQuestionId) {
-                            setSelectedPracticeQuestion(Number(firstQuestionId));
-                            toast.success(`Starting ${path.name}`);
-                        } else {
-                            toast.error('This path has no questions');
-                        }
-                    }}
+                    onStartPath={(path) => setSelectedPath(path)}
                 />
             );
         }
@@ -264,6 +281,7 @@ export default function DashboardPage() {
         if (activeTab === 'analytics') {
             return <AnalyticsContent loading={loadingAnalytics} data={analyticsData} />;
         }
+        if (activeTab === 'tournaments') return <TournamentView />;
         if (activeTab === 'profile') return <LoadingContent />;
         if (activeTab === 'dashboard') {
             return <WelcomeContent user={user} onTabChange={setActiveTab} />;
@@ -291,11 +309,21 @@ export default function DashboardPage() {
                         onTabChange={(tab) => {
                             setActiveTab(tab);
                             setSelectedPracticeQuestion(null);
+                            setSelectedPath(null);
                         }}
                     />
-                    <main className="flex-1 transition-all duration-300 md:ml-64 p-8">
-                        {renderContent()}
-                    </main>
+                    <div className="flex-1 flex flex-col transition-all duration-300 md:ml-64">
+                        <div className="p-0">
+                            <ModernHeader
+                                username={user.username}
+                                role={user.role}
+                                userId={user.id}
+                            />
+                        </div>
+                        <main className="flex-1 p-8">
+                            {renderContent()}
+                        </main>
+                    </div>
                 </>
             )}
         </div>

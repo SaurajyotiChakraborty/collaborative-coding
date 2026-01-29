@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { getCompetitionById } from '@/app/actions/competition';
 import { CodeArena } from '@/components/competition/code-arena';
+import { SpectatorArena } from '@/components/spectator/spectator-arena';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +46,17 @@ const WaitingLobby = ({ competition, onExit }: { competition: any, onExit: () =>
                 <ArrowLeft className="mr-2 h-4 w-4" /> Exit Lobby
             </Button>
         </Card>
+    </div>
+);
+
+const SpectatorWrapper = ({ competition, onBack }: { competition: any, onBack: () => void }) => (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+            <SpectatorArena
+                competitionId={competition.id}
+                onBack={onBack}
+            />
+        </div>
     </div>
 );
 
@@ -157,7 +169,15 @@ export default function CompetitionArenaPage() {
             case 'Waiting':
                 return <WaitingLobby competition={competition} onExit={() => router.push('/dashboard')} />;
             case 'InProgress':
-                return <InProgressArena competition={competition} />;
+                // Check if current user is a participant
+                const isParticipant = competition.participants.some(
+                    (p: any) => p.id === session?.user?.id
+                );
+                if (isParticipant) {
+                    return <InProgressArena competition={competition} />;
+                } else {
+                    return <SpectatorWrapper competition={competition} onBack={() => router.push('/dashboard')} />;
+                }
             case 'Completed':
                 return <CompletedArena onBack={() => router.push('/dashboard')} />;
             default:

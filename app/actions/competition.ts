@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { inngest } from '@/lib/inngest'
+import { createNotification } from './notification'
 
 export async function createCompetition(data: {
     mode: 'Ai' | 'Human';
@@ -85,7 +86,7 @@ export async function getCompetitions(status?: 'Waiting' | 'InProgress' | 'Compl
     try {
         const competitions = await prisma.competition.findMany({
             where: (status ? { status } : {
-                status: { not: 'Archived' }
+                status: { in: ['Waiting', 'InProgress', 'Completed'] }
             }) as any,
             include: {
                 questions: true,
@@ -146,7 +147,21 @@ export async function joinCompetition(competitionId: number, userId: string) {
             return { success: false, error: 'Your account is restricted from participating in competitions.' };
         }
 
-        if (competition.status !== 'Waiting') return { success: false, error: 'Competition not accepting players' }
+        if (competition.status !== 'Waiting') {
+            // Potential InProgress state, check for 1-minute grace period
+            if (competition.status === 'InProgress' && competition.startTime) {
+                const startAt = new Date(competition.startTime);
+                const graceEnd = new Date(startAt.getTime() + 60 * 1000); // 1 minute
+                if (new Date() <= graceEnd) {
+                    // Check if already registered
+                    const isRegistered = competition.participants.some(p => p.id === userId);
+                    if (isRegistered) {
+                        return { success: true }; // Allow in during grace period
+                    }
+                }
+            }
+            return { success: false, error: 'Competition not accepting new players' };
+        }
         if (competition.participants.length >= competition.maxParticipants) return { success: false, error: 'Competition full' }
 
         await prisma.competition.update({
@@ -196,6 +211,24 @@ export async function startCompetition(competitionId: number) {
                 }
             });
         }
+
+        // Notify all participants
+        const participants = await prisma.user.findMany({
+            where: {
+                participatedCompetitions: {
+                    some: { id: competitionId }
+                }
+            }
+        });
+
+        await Promise.all(participants.map(user =>
+            createNotification({
+                userId: user.id,
+                type: 'CompetitionStart',
+                message: `Competition #${competition.id} has started!`,
+                competitionId: competition.id
+            })
+        ));
 
         revalidatePath('/')
         return { success: true, competition }
@@ -261,7 +294,7 @@ export async function endCompetition(competitionId: number) {
             }
         })
 
-        // Update user stats and leaderboard
+        // Update user stats, leaderboard, and send notifications
         for (let i = 0; i < rankings.length; i++) {
             const ranking = rankings[i]
             const isWinner = i === 0
@@ -297,6 +330,14 @@ export async function endCompetition(competitionId: number) {
                     bestStreak: isWinner ? { increment: 1 } : undefined,
                     competitionsCompleted: { increment: 1 }
                 }
+            })
+
+            // Send Result Notification
+            await createNotification({
+                userId: ranking.userId,
+                type: 'Result',
+                message: `Competition #${competitionId} results: You placed #${i + 1} with ${ranking.finalScore.toFixed(0)} points!`,
+                competitionId: competitionId
             })
         }
 

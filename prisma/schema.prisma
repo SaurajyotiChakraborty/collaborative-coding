@@ -28,6 +28,12 @@ enum CompetitionStatus {
   InProgress
   Completed
   Archived
+  Scheduled
+}
+
+enum CompetitionType {
+  Battle
+  Tournament
 }
 
 enum NotificationType {
@@ -48,6 +54,12 @@ enum WorkspaceRole {
   Maintainer
   Contributor
   Viewer
+}
+
+enum AppealStatus {
+  Pending
+  Approved
+  Rejected
 }
 
 model User {
@@ -78,6 +90,7 @@ model User {
   workspaceFiles          WorkspaceFile[]      @relation("LastModifiedBy")
   workspaceLocks          FileLock[]
   workspaceChats          WorkspaceChat[]
+  banAppeals              BanAppeal[]
   
   // Relations for workspace leadership (optional if just checking ID)
   ledWorkspaces           WorkspaceGroup[]     @relation("Leader")
@@ -110,12 +123,35 @@ model Question {
 
   learningPaths         LearningPath[]     @relation("PathQuestions")
   dailyChallenges       DailyChallenge[]
+  translations          QuestionTranslation[]
+  
+  // Practice management
+  publishedAt           DateTime?
+  isPractice            Boolean            @default(false)
 
   @@map("questions")
 }
 
+model QuestionTranslation {
+  id            Int      @id @default(autoincrement())
+  questionId    Int
+  question      Question @relation(fields: [questionId], references: [id])
+  locale        String   // 'en', 'es', etc.
+  title         String
+  description   String
+  constraints   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([questionId, locale])
+  @@map("question_translations")
+}
+
 model Competition {
   id                  Int               @id @default(autoincrement())
+  title               String?
+  description         String?
+  type                CompetitionType   @default(Battle)
   mode                CompetitionMode
   maxParticipants     Int
   // Participants stored as many-to-many relation ideally, but Spacetime used Vec<Identity>
@@ -340,4 +376,17 @@ model DailyChallenge {
   bonusMultiplier     Float            @default(1.5)
   
   @@map("daily_challenges")
+}
+
+model BanAppeal {
+  id          Int          @id @default(autoincrement())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  reason      String
+  status      AppealStatus @default(Pending)
+  adminNotes  String?
+  createdAt   DateTime     @default(now())
+  resolvedAt  DateTime?
+
+  @@map("ban_appeals")
 }

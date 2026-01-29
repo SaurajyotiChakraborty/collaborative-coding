@@ -1,6 +1,9 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]/route'
+import { revalidatePath } from 'next/cache'
 
 export async function getQuestions() {
     try {
@@ -115,5 +118,99 @@ export async function getUnapprovedQuestions() {
     } catch (error) {
         console.error('Failed to fetch unapproved questions:', error);
         return { success: false, error: 'Failed to fetch unapproved questions' };
+    }
+}
+
+export async function upsertQuestionTranslation(data: {
+    questionId: number;
+    locale: string;
+    title: string;
+    description: string;
+    constraints: string;
+}) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (session?.user?.role !== 'Admin') return { success: false, error: 'Unauthorized' };
+
+        const translation = await prisma.questionTranslation.upsert({
+            where: {
+                questionId_locale: {
+                    questionId: data.questionId,
+                    locale: data.locale
+                }
+            },
+            update: {
+                title: data.title,
+                description: data.description,
+                constraints: data.constraints
+            },
+            create: {
+                questionId: data.questionId,
+                locale: data.locale,
+                title: data.title,
+                description: data.description,
+                constraints: data.constraints
+            }
+        });
+
+        return { success: true, translation };
+    } catch (error) {
+        console.error('Failed to upsert translation:', error);
+        return { success: false, error: 'Failed' };
+    }
+}
+
+export async function getQuestion(id: number, locale: string = 'en') {
+    try {
+        const question = await prisma.question.findUnique({
+            where: { id },
+            include: {
+                translations: {
+                    where: { locale }
+                }
+            }
+        });
+
+        if (!question) return { success: false, error: 'Not found' };
+
+        // If translation exists for the requested locale, merge it
+        if (question.translations && question.translations.length > 0) {
+            const trans = question.translations[0];
+            return {
+                success: true,
+                question: {
+                    ...question,
+                    title: trans.title,
+                    description: trans.description,
+                    constraints: trans.constraints
+                }
+            };
+        }
+
+        return { success: true, question };
+    } catch (error) {
+        console.error('Failed to get question:', error);
+        return { success: false, error: 'Failed' };
+    }
+}
+
+export async function schedulePracticeQuestion(id: number, publishedAt: Date) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (session?.user?.role !== 'Admin') return { success: false, error: 'Unauthorized' };
+
+        const question = await prisma.question.update({
+            where: { id },
+            data: {
+                publishedAt,
+                isPractice: true
+            }
+        });
+
+        revalidatePath('/dashboard/practice');
+        return { success: true, question };
+    } catch (error) {
+        console.error('Failed to schedule practice question:', error);
+        return { success: false, error: 'Failed' };
     }
 }

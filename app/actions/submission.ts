@@ -137,3 +137,35 @@ async function handlePostSuccessLogic(userId: string, questionId: number) {
         console.error('Failed to process post-success logic:', error);
     }
 }
+
+/**
+ * Fetches the latest submission for a participant in a competition.
+ * Used by spectators to view live code.
+ */
+export async function getLatestSubmission(competitionId: number, userId: string) {
+    try {
+        const submission = await prisma.submission.findFirst({
+            where: {
+                competitionId,
+                userId
+            },
+            orderBy: { submittedAt: 'desc' },
+            select: {
+                id: true,
+                code: true,
+                language: true,
+                submittedAt: true,
+                allTestsPassed: true
+            }
+        });
+
+        if (!submission) {
+            return { success: true, submission: null };
+        }
+
+        return { success: true, submission };
+    } catch (error) {
+        console.error('Failed to fetch latest submission:', error);
+        return { success: false, error: 'Failed to fetch submission' };
+    }
+}

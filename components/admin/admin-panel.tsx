@@ -7,12 +7,15 @@ import {
     Users,
     Code2,
     Trophy,
-    Settings
+    Settings,
+    Mail
 } from 'lucide-react';
 import { AdminOverview } from './admin-overview';
 import { UserManagement } from './user-management';
 import { QuestionManager } from './question-manager';
 import { CompetitionManagement } from './competition-management';
+import { AppealManagement } from './appeal-management';
+import { TournamentManagement } from './tournament-management';
 
 export function AdminPanel() {
     const [activeTab, setActiveTab] = useState('overview');
@@ -35,7 +38,7 @@ export function AdminPanel() {
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-6">
                     <TabsTrigger value="overview" className="flex items-center gap-2">
                         <LayoutDashboard className="h-4 w-4" />
                         Overview
@@ -51,6 +54,14 @@ export function AdminPanel() {
                     <TabsTrigger value="competitions" className="flex items-center gap-2">
                         <Trophy className="h-4 w-4" />
                         Competitions
+                    </TabsTrigger>
+                    <TabsTrigger value="appeals" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Appeals
+                    </TabsTrigger>
+                    <TabsTrigger value="tournaments" className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4" />
+                        Tournaments
                     </TabsTrigger>
                 </TabsList>
 
@@ -68,6 +79,14 @@ export function AdminPanel() {
 
                 <TabsContent value="competitions">
                     <CompetitionManagement />
+                </TabsContent>
+
+                <TabsContent value="appeals">
+                    <AppealManagement />
+                </TabsContent>
+
+                <TabsContent value="tournaments">
+                    <TournamentManagement />
                 </TabsContent>
             </Tabs>
         </div>

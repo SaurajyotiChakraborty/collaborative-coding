@@ -32,6 +32,7 @@ import { signOut } from 'next-auth/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
+// Lingo compiler handles static strings in JSX
 
 interface SideNavProps {
   username: string;
@@ -61,14 +62,14 @@ export const SideNav: React.FC<SideNavProps> = ({ username, role, activeTab, onT
     { id: 'daily', icon: Flame, label: 'Daily Challenges' },
     { id: 'practice', icon: BookOpen, label: 'Practice Mode' },
     { id: 'achievements', icon: Award, label: 'Achievements' },
-    { id: 'level', icon: Zap, label: 'Level & XP' },
-    { id: 'battlepass', icon: Crown, label: 'Battle Pass' },
+    // { id: 'level', icon: Zap, label: 'Level & XP' },
+    // { id: 'battlepass', icon: Crown, label: 'Battle Pass' },
     { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
-    { id: 'friends', icon: UserPlus, label: 'Friends' },
+    // { id: 'friends', icon: UserPlus, label: 'Friends' },
     { id: 'tournaments', icon: Users, label: 'Tournaments' },
     { id: 'analytics', icon: BarChart, label: 'Analytics' },
-    { id: 'ai-mentor', icon: Bot, label: 'AI Mentor' },
-    { id: 'referrals', icon: Gift, label: 'Referrals' },
+    // { id: 'ai-mentor', icon: Bot, label: 'AI Mentor' },
+    // { id: 'referrals', icon: Gift, label: 'Referrals' },
     { id: 'spectate', icon: Eye, label: 'Spectate' },
     { id: 'replays', icon: Video, label: 'Replays' },
     { id: 'profile', icon: Users, label: 'Profile' },
@@ -162,7 +163,18 @@ export const SideNav: React.FC<SideNavProps> = ({ username, role, activeTab, onT
                     <Icon className={cn('h-5 w-5', isActive && 'animate-pulse')} />
                     {isExpanded && (
                       <>
-                        <span className="flex-1 text-left font-medium">{item.label}</span>
+                        <span className="flex-1 text-left font-medium">
+                          {item.id === 'dashboard' ? 'Dashboard' :
+                            item.id === 'workspace' ? 'Workspaces' :
+                              item.id === 'daily' ? 'Daily Challenges' :
+                                item.id === 'practice' ? 'Practice Mode' :
+                                  item.id === 'achievements' ? 'Achievements' :
+                                    item.id === 'leaderboard' ? 'Leaderboard' :
+                                      item.id === 'spectate' ? 'Spectator Mode' :
+                                        item.id === 'tournaments' ? 'Tournaments' :
+                                          item.id === 'analytics' ? 'Performance' :
+                                            item.id === 'replays' ? 'Video Replays' : item.label}
+                        </span>
                         {isActive && <ChevronRight className="h-4 w-4" />}
                       </>
                     )}

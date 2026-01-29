@@ -12,9 +12,9 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { getQuestions, createQuestion, updateQuestion, deleteQuestion, approveQuestion, getUnapprovedQuestions } from '@/app/actions/question';
+import { getQuestions, createQuestion, updateQuestion, deleteQuestion, approveQuestion, getUnapprovedQuestions, upsertQuestionTranslation } from '@/app/actions/question';
 import { toast } from 'sonner';
-import { Sparkles, Loader2, Plus, Trash2, Edit2, CheckCircle, XCircle, Search, Filter, LayoutGrid, List, Wand2, PlayCircle, Save } from 'lucide-react';
+import { Sparkles, Loader2, Plus, Trash2, Edit2, CheckCircle, XCircle, Search, Filter, LayoutGrid, List, Wand2, PlayCircle, Save, Languages, Globe } from 'lucide-react';
 
 interface TestCase {
   input: string;
@@ -63,7 +63,16 @@ export const QuestionManager: React.FC = () => {
   const [canonicalSolution, setCanonicalSolution] = useState<string>('');
   const [optimalTimeComplexity, setOptimalTimeComplexity] = useState<string>('');
   const [optimalSpaceComplexity, setOptimalSpaceComplexity] = useState<string>('');
+  const [isPractice, setIsPractice] = useState<boolean>(false);
+  const [publishedAt, setPublishedAt] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Translation states
+  const [showTranslations, setShowTranslations] = useState(false);
+  const [selectedLocale, setSelectedLocale] = useState('es');
+  const [transTitle, setTransTitle] = useState('');
+  const [transDescription, setTransDescription] = useState('');
+  const [transConstraints, setTransConstraints] = useState('');
 
   // AI Generation states
   const [useAI, setUseAI] = useState<boolean>(false);
@@ -177,7 +186,9 @@ export const QuestionManager: React.FC = () => {
           tags: tagsList,
           canonicalSolution,
           optimalTimeComplexity,
-          optimalSpaceComplexity
+          optimalSpaceComplexity,
+          isPractice,
+          publishedAt: publishedAt ? new Date(publishedAt) : undefined
         } as any);
         if (res.success) toast.success('Question updated!');
       } else {
@@ -192,7 +203,9 @@ export const QuestionManager: React.FC = () => {
           isAiGenerated: useAI,
           canonicalSolution,
           optimalTimeComplexity,
-          optimalSpaceComplexity
+          optimalSpaceComplexity,
+          isPractice,
+          publishedAt: publishedAt ? new Date(publishedAt) : undefined
         } as any);
         if (res.success) toast.success('Question created!');
       }
@@ -235,6 +248,14 @@ export const QuestionManager: React.FC = () => {
     setCanonicalSolution((q as any).canonicalSolution || '');
     setOptimalTimeComplexity((q as any).optimalTimeComplexity || '');
     setOptimalSpaceComplexity((q as any).optimalSpaceComplexity || '');
+    setIsPractice((q as any).isPractice || false);
+    if ((q as any).publishedAt) {
+      const date = new Date((q as any).publishedAt);
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      setPublishedAt(localDate.toISOString().slice(0, 16));
+    } else {
+      setPublishedAt('');
+    }
     setIsEditing(true);
     setUseAI(false);
     setActiveTab('create');
@@ -252,6 +273,8 @@ export const QuestionManager: React.FC = () => {
     setCanonicalSolution('');
     setOptimalTimeComplexity('');
     setOptimalSpaceComplexity('');
+    setIsPractice(false);
+    setPublishedAt('');
   };
 
   const addTestCase = () => setTestCases([...testCases, { input: '', expectedOutput: '' }]);
@@ -366,6 +389,9 @@ export const QuestionManager: React.FC = () => {
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(q)}>
                             <Edit2 className="h-4 w-4 text-blue-500" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowTranslations(true)}>
+                            <Globe className="h-4 w-4 text-purple-500" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(q.id)}>
                             <Trash2 className="h-4 w-4 text-red-500" />
@@ -565,6 +591,24 @@ export const QuestionManager: React.FC = () => {
                     </div>
                   </div>
 
+                  <div className="space-y-4 p-4 rounded-xl border bg-orange-500/5 border-orange-200 dark:border-orange-800">
+                    <div className="flex items-center justify-between">
+                      <Label className="font-bold text-orange-600">Practice Mode</Label>
+                      <Switch checked={isPractice} onCheckedChange={setIsPractice} />
+                    </div>
+                    {isPractice && (
+                      <div className="space-y-2">
+                        <Label className="text-xs">Schedule Appearance</Label>
+                        <Input
+                          type="datetime-local"
+                          className="h-8 text-xs bg-background/50"
+                          value={publishedAt}
+                          onChange={(e) => setPublishedAt(e.target.value)}
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   <div className="space-y-3">
                     <Label htmlFor="constraints" className="font-bold">Constraints</Label>
                     <Input id="constraints" placeholder="e.g., 1 <= n <= 10^5" className="bg-muted/50" value={constraints} onChange={(e) => setConstraints(e.target.value)} />
@@ -647,6 +691,103 @@ export const QuestionManager: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Translation Dialog/Modal */}
+      {showTranslations && editId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <Card className="w-full max-w-2xl glass-strong shadow-2xl">
+            <CardHeader className="border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Languages className="h-5 w-5 text-purple-600" />
+                    Translate: {title}
+                  </CardTitle>
+                  <CardDescription>Add content for other supported languages</CardDescription>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setShowTranslations(false)}>
+                  <XCircle className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-6">
+              <div className="flex gap-4 p-2 bg-muted/30 rounded-lg">
+                {['es', 'fr', 'de'].map(loc => (
+                  <Button
+                    key={loc}
+                    variant={selectedLocale === loc ? 'default' : 'outline'}
+                    size="sm"
+                    className="flex-1 uppercase font-bold"
+                    onClick={() => setSelectedLocale(loc)}
+                  >
+                    {loc}
+                  </Button>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                <Label>Translated Title</Label>
+                <Input
+                  value={transTitle}
+                  onChange={(e) => setTransTitle(e.target.value)}
+                  placeholder={`Title in ${selectedLocale}...`}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Translated Description (Markdown)</Label>
+                <Textarea
+                  rows={6}
+                  value={transDescription}
+                  onChange={(e) => setTransDescription(e.target.value)}
+                  placeholder={`Description in ${selectedLocale}...`}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Translated Constraints</Label>
+                <Input
+                  value={transConstraints}
+                  onChange={(e) => setTransConstraints(e.target.value)}
+                  placeholder={`Constraints in ${selectedLocale}...`}
+                />
+              </div>
+
+              <div className="pt-4 border-t flex gap-3">
+                <Button variant="outline" className="flex-1" onClick={() => setShowTranslations(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-[2] bg-purple-600 hover:bg-purple-700"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    const res = await upsertQuestionTranslation({
+                      questionId: editId,
+                      locale: selectedLocale,
+                      title: transTitle,
+                      description: transDescription,
+                      constraints: transConstraints
+                    });
+                    if (res.success) {
+                      toast.success(`Translation for ${selectedLocale} saved!`);
+                      setTransTitle('');
+                      setTransDescription('');
+                      setTransConstraints('');
+                    } else {
+                      toast.error('Failed to save translation');
+                    }
+                    setIsLoading(false);
+                  }}
+                  disabled={isLoading || !transTitle || !transDescription}
+                >
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Translation
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

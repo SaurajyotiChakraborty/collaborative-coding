@@ -6,13 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { signOut } from 'next-auth/react';
 import { toast } from 'sonner';
+import { NotificationBell } from '@/components/notifications/notification-bell';
 
 interface ModernHeaderProps {
   username: string;
   role: string;
+  userId: string;
 }
 
-export const ModernHeader: React.FC<ModernHeaderProps> = ({ username, role }) => {
+export const ModernHeader: React.FC<ModernHeaderProps> = ({ username, role, userId }) => {
   const handleLogout = async (): Promise<void> => {
     await signOut({ callbackUrl: '/' });
     toast.success('Logged out successfully');
@@ -35,6 +37,8 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({ username, role }) =>
         </div>
 
         <div className="flex items-center gap-3">
+          <NotificationBell userId={userId} />
+
           <div className="text-right mr-2">
             <p className="text-sm font-semibold">{username}</p>
             <Badge

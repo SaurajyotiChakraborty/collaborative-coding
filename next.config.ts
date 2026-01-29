@@ -10,7 +10,7 @@ export default async function (): Promise<NextConfig> {
     targetLocales: ["es", "de", "fr"],
     models: "lingo.dev",
     dev: {
-      usePseudotranslator: true, // Fake translations for development
+      usePseudotranslator: false, // Show real translations or source text
     },
   });
 }

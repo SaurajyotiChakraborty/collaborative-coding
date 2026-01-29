@@ -58,14 +58,35 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user, trigger }) {
+            // On initial sign in, user object is available
             if (user) {
                 token.id = user.id;
                 token.username = user.username;
                 token.role = user.role;
                 token.rating = user.rating;
-                token.xp = user.xp.toString(); // Ensure XP is a string
+                token.xp = user.xp?.toString() || '0';
                 token.isCheater = user.isCheater;
             }
+
+            // Always refresh user data from database to get latest role
+            if (token.id) {
+                try {
+                    const dbUser = await prisma.user.findUnique({
+                        where: { id: token.id as string },
+                        select: { username: true, role: true, rating: true, xp: true, isCheater: true }
+                    });
+                    if (dbUser) {
+                        token.username = dbUser.username;
+                        token.role = dbUser.role;
+                        token.rating = dbUser.rating;
+                        token.xp = dbUser.xp.toString();
+                        token.isCheater = dbUser.isCheater;
+                    }
+                } catch (error) {
+                    console.error('Failed to refresh user data in JWT:', error);
+                }
+            }
+
             return token;
         },
         async session({ session, token }) {
@@ -74,7 +95,7 @@ export const authOptions: NextAuthOptions = {
                 session.user.username = token.username as string;
                 session.user.role = token.role as any;
                 session.user.rating = token.rating as number;
-                session.user.xp = token.xp as string; // Keep as string or convert if needed
+                session.user.xp = token.xp as string;
                 session.user.isCheater = token.isCheater as boolean;
             }
             return session;
@@ -102,8 +123,16 @@ export const authOptions: NextAuthOptions = {
                     user.username = newUser.username;
                     user.role = newUser.role;
                     user.rating = newUser.rating;
-                    user.xp = newUser.xp.toString(); // Convert BigInt to string
+                    user.xp = newUser.xp.toString();
                     user.isCheater = newUser.isCheater;
+                } else {
+                    // For existing OAuth users, populate user object with database values
+                    user.id = existingUser.id;
+                    user.username = existingUser.username;
+                    user.role = existingUser.role;
+                    user.rating = existingUser.rating;
+                    user.xp = existingUser.xp.toString();
+                    user.isCheater = existingUser.isCheater;
                 }
             }
             return true;

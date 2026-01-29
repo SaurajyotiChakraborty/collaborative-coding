@@ -5,7 +5,8 @@ import {
     processSubmission,
     recalculateLeaderboard,
     checkAchievements,
-    scheduleDailyChallenge
+    scheduleDailyChallenge,
+    startTournamentAutomated
 } from "@/inngest/functions";
 
 export const { GET, POST, PUT } = serve({
@@ -16,5 +17,6 @@ export const { GET, POST, PUT } = serve({
         recalculateLeaderboard,
         checkAchievements,
         scheduleDailyChallenge,
+        startTournamentAutomated,
     ],
 });
