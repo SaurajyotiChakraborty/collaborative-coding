@@ -40,12 +40,12 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({ username, role, user
           <NotificationBell userId={userId} />
 
           <div className="text-right mr-2">
-            <p className="text-sm font-semibold">{username}</p>
+            <p className="text-sm font-semibold">{username || 'User'}</p>
             <Badge
               variant={role === 'Admin' ? 'default' : 'secondary'}
               className="text-xs"
             >
-              {role}
+              {role || 'User'}
             </Badge>
           </div>
 

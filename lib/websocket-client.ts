@@ -51,7 +51,7 @@ export class WorkspaceWebSocketClient {
   connect(): void {
     if (typeof window === 'undefined') return;
 
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001';
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || '';
 
     try {
       this.socket = io(wsUrl, {

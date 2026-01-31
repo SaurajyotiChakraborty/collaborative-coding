@@ -9,7 +9,7 @@ const docker = new Docker();
 export interface ExecutionConfig {
     language: 'javascript' | 'python' | 'java';
     code: string;
-    testCases: Array<{ input: string; expectedOutput: string }>;
+    testCases: Array<{ input: string; output: string }>;
     timeLimit?: number; // milliseconds
     memoryLimit?: number; // MB
 }
@@ -112,7 +112,7 @@ export class DockerCodeExecutor {
 
     private async runSingleTest(
         config: ExecutionConfig,
-        testCase: { input: string; expectedOutput: string },
+        testCase: { input: string; output: string },
         workDir: string,
         executionId: string
     ) {
@@ -172,7 +172,7 @@ try {
 
             const executionTime = Date.now() - startTime;
             const actualOutput = output.trim();
-            const expectedOutput = testCase.expectedOutput.trim();
+            const expectedOutput = testCase.output.trim();
             const passed = actualOutput === expectedOutput;
 
             return {
@@ -189,7 +189,7 @@ try {
             return {
                 passed: false,
                 input: testCase.input,
-                expected: testCase.expectedOutput,
+                expected: testCase.output,
                 actual: null,
                 error: error instanceof Error ? error.message : 'Execution error',
                 executionTime,

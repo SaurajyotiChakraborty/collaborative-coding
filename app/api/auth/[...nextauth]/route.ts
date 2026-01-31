@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
                 // Find user by email
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
-                }) as any; // Cast as any to bypass temporary lint issue with password field
+                }) as any;
 
                 if (!user || !user.password) {
                     throw new Error('Invalid email or password');
@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user, trigger }) {
+        async jwt({ token, user }) {
             // On initial sign in, user object is available
             if (user) {
                 token.id = user.id;
@@ -73,16 +73,21 @@ export const authOptions: NextAuthOptions = {
             // Always refresh user data from database to get latest role
             if (token.id) {
                 try {
-                    const dbUser = await prisma.user.findUnique({
-                        where: { id: token.id as string },
-                        select: { username: true, role: true, rating: true, xp: true, isCheater: true }
-                    });
+                    // Use raw query to bypass potential stale client validation issues
+                    const dbUsers: any[] = await prisma.$queryRawUnsafe(
+                        'SELECT username, role, rating, xp, "isCheater" FROM users WHERE id = $1',
+                        token.id
+                    );
+                    const dbUser = dbUsers[0];
                     if (dbUser) {
                         token.username = dbUser.username;
                         token.role = dbUser.role;
                         token.rating = dbUser.rating;
                         token.xp = dbUser.xp.toString();
                         token.isCheater = dbUser.isCheater;
+                    } else {
+                        // User not found in database, invalidate token
+                        return {} as any;
                     }
                 } catch (error) {
                     console.error('Failed to refresh user data in JWT:', error);
@@ -102,7 +107,7 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         },
-        async signIn({ user, account, profile }) {
+        async signIn() {
             return true;
         },
     },
@@ -111,8 +116,8 @@ export const authOptions: NextAuthOptions = {
         error: '/auth/error',
     },
     session: {
-        strategy: 'jwt', // Changed from database to jwt for credentials support
-        maxAge: 30 * 24 * 60 * 60, // 30 days
+        strategy: 'jwt',
+        maxAge: 30 * 24 * 60 * 60,
     },
     secret: process.env.NEXTAUTH_SECRET,
 };

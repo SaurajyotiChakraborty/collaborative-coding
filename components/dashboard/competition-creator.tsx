@@ -71,7 +71,7 @@ export const CompetitionCreator: React.FC<CompetitionCreatorProps> = ({ onCreate
 
       const result = await createCompetition({
         mode: mode === 'ai' ? 'Ai' : 'Human',
-        maxParticipants: participants,
+        maxParticipants: mode === 'ai' ? 1 : participants,
         questionIds: selectedQuestions.map(id => Number(id)),
         hasTimeLimit,
         timeLimitMinutes: hasTimeLimit ? timeLimit : 0,

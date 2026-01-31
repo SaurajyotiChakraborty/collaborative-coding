@@ -22,6 +22,9 @@ const io = new Server(httpServer, {
 const pubClient = new Redis(REDIS_URL);
 const subClient = pubClient.duplicate();
 
+pubClient.on('error', (err) => console.error('[WS] Redis PubClient Error:', err));
+subClient.on('error', (err) => console.error('[WS] Redis SubClient Error:', err));
+
 // Redis adapter for scaling
 const { createAdapter } = require('@socket.io/redis-adapter');
 io.adapter(createAdapter(pubClient, subClient));

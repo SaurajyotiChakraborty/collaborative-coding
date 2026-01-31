@@ -85,8 +85,8 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
     }, [questionId]);
 
     const handleRunCode = async () => {
-        if (!question?.testCases) {
-            toast.error('No test cases available for this question');
+        if (!question?.testCases || question.testCases.length === 0) {
+            toast.error('No test cases defined for this challenge. Please contact an admin.');
             return;
         }
 
@@ -205,7 +205,7 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
     }
 
     return (
-        <div className="flex flex-col h-[calc(100vh-100px)] animate-in fade-in duration-500">
+        <div className="flex flex-col h-[calc(100vh-120px)] animate-in fade-in duration-500">
             {/* Header */}
             <div className="flex items-center justify-between mb-4 bg-white/50 dark:bg-gray-900/50 p-4 rounded-xl backdrop-blur-sm border border-white/20">
                 <div className="flex items-center gap-4">
@@ -276,9 +276,9 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
                 {/* Left Side: Question & Analysis */}
-                <div className="flex flex-col gap-4 overflow-hidden">
-                    <Card className="flex-1 overflow-hidden border-white/20 shadow-xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl">
-                        <Tabs value={activeResultTab} onValueChange={setActiveResultTab} className="flex flex-col h-full">
+                <div className="flex flex-col gap-4 min-h-0 overflow-hidden">
+                    <Card className="flex-1 min-h-0 overflow-hidden border-white/20 shadow-xl bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl">
+                        <Tabs value={activeResultTab} onValueChange={setActiveResultTab} className="flex flex-col h-full min-h-0">
                             <div className="px-4 pt-2 border-b border-white/20">
                                 <TabsList className="bg-transparent gap-2">
                                     <TabsTrigger value="problem" className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/30">
@@ -339,7 +339,7 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
                                     )}
                                 </TabsContent>
 
-                                <TabsContent value="results" className="mt-0 space-y-6 px-1 h-full">
+                                <TabsContent value="results" className="mt-0 space-y-6 px-1">
                                     {!testResults ? (
                                         <div className="h-full flex flex-col items-center justify-center p-12 text-center space-y-4">
                                             <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
@@ -364,7 +364,7 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
                                                 </span>
                                             </div>
 
-                                            <div className="space-y-4 pb-8">
+                                            <div className="space-y-4 pb-20">
                                                 {testResults.results.map((result: any, idx: number) => (
                                                     <Card key={idx} className={cn(
                                                         "border-l-4 overflow-hidden",
@@ -385,13 +385,13 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
                                                             <div className="grid grid-cols-1 gap-2">
                                                                 <div className="space-y-1">
                                                                     <p className="text-[10px] uppercase font-bold text-muted-foreground">Input</p>
-                                                                    <pre className="p-2 bg-black/20 rounded text-xs font-mono">{JSON.stringify(result.input)}</pre>
+                                                                    <pre className="p-2 bg-black/20 rounded text-xs font-mono whitespace-pre-wrap break-all">{JSON.stringify(result.input)}</pre>
                                                                 </div>
                                                                 <div className="grid grid-cols-2 gap-4">
                                                                     <div className="space-y-1">
                                                                         <p className="text-[10px] uppercase font-bold text-muted-foreground">Output</p>
                                                                         <pre className={cn(
-                                                                            "p-2 bg-black/20 rounded text-xs font-mono min-h-[40px] overflow-x-auto",
+                                                                            "p-2 bg-black/20 rounded text-xs font-mono min-h-[40px] overflow-x-auto whitespace-pre-wrap break-all",
                                                                             result.passed ? "text-green-500" : "text-red-500"
                                                                         )}>
                                                                             {result.actual || (result.error ? "No output" : "Empty output")}
@@ -399,7 +399,7 @@ export function PracticeArena({ questionId, pathId, onBack, onComplete }: Practi
                                                                     </div>
                                                                     <div className="space-y-1">
                                                                         <p className="text-[10px] uppercase font-bold text-muted-foreground">Expected</p>
-                                                                        <pre className="p-2 bg-black/20 rounded text-xs font-mono text-gray-400 min-h-[40px] overflow-x-auto">
+                                                                        <pre className="p-2 bg-black/20 rounded text-xs font-mono text-gray-400 min-h-[40px] overflow-x-auto whitespace-pre-wrap break-all">
                                                                             {result.expected}
                                                                         </pre>
                                                                     </div>

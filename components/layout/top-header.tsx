@@ -63,7 +63,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ username, rating, classNam
 
           {/* User Avatar */}
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg cursor-pointer hover:scale-105 transition-transform duration-200">
-            {username.charAt(0).toUpperCase()}
+            {(username || 'U').charAt(0).toUpperCase()}
           </div>
         </div>
       </div>

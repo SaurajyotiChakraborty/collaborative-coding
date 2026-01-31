@@ -128,10 +128,19 @@ export function TournamentView() {
                                         </div>
                                     </div>
                                     <Button
-                                        className="w-full h-12 text-lg font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:scale-[1.02] transition-transform shadow-lg shadow-purple-600/20 rounded-2xl"
-                                        onClick={() => handleJoin(t.id)}
+                                        className={`w-full h-12 text-lg font-bold transition-transform shadow-lg rounded-2xl ${t.isJoined
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none border-2 border-gray-200'
+                                                : 'bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:scale-[1.02] shadow-purple-600/20 text-white'
+                                            }`}
+                                        onClick={() => !t.isJoined && handleJoin(t.id)}
+                                        disabled={t.isJoined}
                                     >
-                                        Participate Now
+                                        {t.isJoined ? (
+                                            <div className="flex items-center gap-2">
+                                                <ShieldCheck className="h-5 w-5" />
+                                                Already Joined
+                                            </div>
+                                        ) : 'Participate Now'}
                                     </Button>
                                 </CardContent>
                             </Card>

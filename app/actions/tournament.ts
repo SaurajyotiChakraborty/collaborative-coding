@@ -19,6 +19,18 @@ export async function createTournament(data: {
         const session = await getServerSession(authOptions);
         if (session?.user?.role !== 'Admin') return { success: false, error: 'Unauthorized' };
 
+        console.log('[Tournament] Creating with session user:', JSON.stringify(session.user));
+
+        // Verify user exists in DB
+        const dbUser = await prisma.user.findUnique({
+            where: { id: session.user.id }
+        });
+
+        if (!dbUser) {
+            console.error('[Tournament] Error: User ID from session does not exist in database:', session.user.id);
+            return { success: false, error: 'Session user not found in database. Please re-login.' };
+        }
+
         // Create a competition of type Tournament
         const tournament = await prisma.competition.create({
             data: {
@@ -34,7 +46,9 @@ export async function createTournament(data: {
                 questions: {
                     connect: data.questionIds.map(id => ({ id }))
                 },
-                createdById: (session.user as any).id
+                createdBy: {
+                    connect: { id: session.user.id }
+                }
             } as any
         });
 
@@ -53,14 +67,19 @@ export async function createTournament(data: {
         revalidatePath('/dashboard/tournaments');
         revalidatePath('/admin');
         return { success: true, tournament };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Failed to create tournament:', error);
-        return { success: false, error: 'Failed' };
+        if (error.code === 'P2003') {
+            console.error('[Tournament] Foreign key violation details:', JSON.stringify(error.meta));
+        }
+        return { success: false, error: 'Database constraint error. Please try logging out and in again.' };
     }
 }
 
 export async function getScheduledTournaments() {
     try {
+        const session = await getServerSession(authOptions);
+        const userId = (session?.user as any)?.id;
         const now = new Date();
         const tournaments = await prisma.competition.findMany({
             where: {
@@ -69,7 +88,11 @@ export async function getScheduledTournaments() {
             } as any,
             include: {
                 _count: { select: { participants: true } },
-                questions: { select: { title: true } }
+                questions: { select: { title: true } },
+                participants: userId ? {
+                    where: { id: userId },
+                    select: { id: true }
+                } : false
             },
             orderBy: { startTime: 'asc' }
         });
@@ -86,12 +109,16 @@ export async function getScheduledTournaments() {
                 // Don't include it in scheduled list anymore
                 revalidatePath('/dashboard/tournaments');
             } else {
-                updatedTournaments.push(t);
+                updatedTournaments.push({
+                    ...t,
+                    isJoined: userId ? (t as any).participants.length > 0 : false
+                });
             }
         }
 
         return { success: true, tournaments: updatedTournaments };
     } catch (error) {
+        console.error('[Tournament] Failed to fetch scheduled:', error);
         return { success: false, error: 'Failed' };
     }
 }

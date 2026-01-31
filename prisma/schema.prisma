@@ -274,6 +274,7 @@ model WorkspaceGroup {
   cloudStoragePath    String
   createdAt           DateTime          @default(now())
   status              WorkspaceStatus   @default(Active)
+  containerId         String?           @unique
 
   members             WorkspaceMember[]
   files               WorkspaceFile[]

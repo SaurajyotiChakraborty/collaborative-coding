@@ -12,5 +12,8 @@ export default async function (): Promise<NextConfig> {
     dev: {
       usePseudotranslator: false, // Show real translations or source text
     },
+    // models: {
+    //   "*:*": "google:gemini-1.5-flash"
+    // },
   });
 }

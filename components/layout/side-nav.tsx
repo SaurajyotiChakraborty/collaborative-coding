@@ -125,15 +125,15 @@ export const SideNav: React.FC<SideNavProps> = ({ username, role, activeTab, onT
             <div className="p-4 border-b border-white/20">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
-                  {username.charAt(0).toUpperCase()}
+                  {(username || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">{username}</p>
+                  <p className="text-sm font-semibold truncate">{username || 'User'}</p>
                   <Badge
                     variant={role === 'Admin' ? 'default' : 'secondary'}
                     className="text-xs mt-1"
                   >
-                    {role}
+                    {role || 'User'}
                   </Badge>
                 </div>
               </div>

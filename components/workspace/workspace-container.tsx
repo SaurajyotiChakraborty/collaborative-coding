@@ -10,9 +10,10 @@ import { MemberList, type WorkspaceMember } from './member-list';
 import { GitPanel } from './git-panel';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Users, MessageSquare, Code2, ChevronRight, X, FolderGit2, BarChart, GitBranch, Settings, Plus, File, Trophy, Circle, Video, Search, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Users, MessageSquare, Code2, ChevronRight, X, FolderGit2, BarChart, GitBranch, Settings, Plus, File, Trophy, Circle, Video, Search, ExternalLink, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useWorkspaceRealtime } from '@/hooks/use-workspace-realtime';
 
 // Mock data for demonstration
@@ -121,7 +122,7 @@ const mockMessages: ChatMessage[] = [
 
 import { useSession, signIn } from 'next-auth/react';
 import { cn } from '@/lib/utils';
-import { getWorkspace, createWorkspace, joinWorkspace, getMyWorkspaces, createFile, updateFile, deleteFile, sendWorkspaceMessage, lockWorkspaceFile, unlockWorkspaceFile } from '@/app/actions/workspace';
+import { getWorkspace, createWorkspace, joinWorkspace, getMyWorkspaces, createFile, updateFile, deleteFile, sendWorkspaceMessage, lockWorkspaceFile, unlockWorkspaceFile, stopWorkspaceSession } from '@/app/actions/workspace';
 
 export const WorkspaceContainer: React.FC = () => {
   const { data: session, status } = useSession();
@@ -456,6 +457,11 @@ export const WorkspaceContainer: React.FC = () => {
   };
 
   const handleDeleteWorkspace = async (): Promise<void> => {
+    if (!currentWorkspaceId) return;
+
+    // Stop container first if exists
+    await stopWorkspaceSession(currentWorkspaceId);
+
     // TODO: Call SpacetimeDB reducer to delete workspace
     console.log('Deleting workspace:', currentWorkspaceId);
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -480,6 +486,25 @@ export const WorkspaceContainer: React.FC = () => {
     } catch (error) {
       console.error('Failed to start session:', error);
       toast.error('Failed to start session');
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  const handleStopSession = async () => {
+    if (!currentWorkspaceId) return;
+    setIsStarting(true);
+    try {
+      const result = await stopWorkspaceSession(currentWorkspaceId);
+      if (result.success) {
+        setSessionUrl(null);
+        toast.success('Workspace session stopped');
+      } else {
+        toast.error(result.error || 'Failed to stop session');
+      }
+    } catch (error) {
+      console.error('Failed to stop session:', error);
+      toast.error('Failed to stop session');
     } finally {
       setIsStarting(false);
     }
@@ -529,6 +554,9 @@ export const WorkspaceContainer: React.FC = () => {
           <div className="flex items-center gap-2">
             <Code2 className="h-4 w-4 text-purple-500" />
             <span className="font-medium text-[#cccccc]">{currentWorkspace?.name}</span>
+            {(currentWorkspace as any)?.containerId && (
+              <Badge variant="outline" className="h-5 text-[10px] border-green-500/50 text-green-500 ml-2">Session Active</Badge>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -541,6 +569,18 @@ export const WorkspaceContainer: React.FC = () => {
           >
             {isFullscreen ? <X className="h-4 w-4" /> : <ChevronRight className="h-4 w-4 rotate-45" />}
           </Button>
+          {sessionUrl && isLeader && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleStopSession}
+              disabled={isStarting}
+              className="h-7 text-xs bg-red-900/50 hover:bg-red-900 border-red-500/50 mr-2"
+            >
+              {isStarting ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <X className="h-3 w-3 mr-1" />}
+              Stop Workspace
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"

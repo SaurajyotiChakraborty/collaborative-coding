@@ -8,15 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { submitCode } from '@/app/actions/submission';
 import { saveLiveDraft } from '@/app/actions/live-draft';
+import { simulateAiSubmission } from '@/app/actions/ai-submission';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 
 interface CodeArenaProps {
   competitionId: bigint;
   questions: Array<{ questionId: bigint; title: string; description: string; difficulty: string }>;
+  mode?: 'Ai' | 'Human';
 }
 
-export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }) => {
+export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions, mode }) => {
   const { data: session } = useSession();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [code, setCode] = useState<string>('// Write your solution here\n');
@@ -25,6 +27,7 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
   const [testResults, setTestResults] = useState<string | null>(null);
   const [tabSwitchCount, setTabSwitchCount] = useState<number>(0);
   const [pasteDetected, setPasteDetected] = useState<boolean>(false);
+  const [executionResults, setExecutionResults] = useState<any[]>([]);
   const visibilityRef = useRef<boolean>(true);
   const draftTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -94,14 +97,14 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
       const { questions: allQuestions } = await getQuestions();
       const question = allQuestions?.find(q => BigInt(q.id) === currentQuestion.questionId);
 
-      if (!question) {
-        toast.error('Question not found');
+      if (!question || !question.testCases || (question.testCases as any[]).length === 0) {
+        toast.error('No test cases defined for this challenge');
         return;
       }
 
       const testCases = (question.testCases as any[]).map((tc) => ({
         input: tc.input,
-        expectedOutput: tc.output || tc.expectedOutput,
+        output: tc.output || tc.expectedOutput,
       }));
 
       const response = await fetch('/api/execute-code', {
@@ -133,9 +136,10 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
         toast.success('All tests passed!');
       } else {
         const failedCount = result.results.filter((r) => !r.passed).length;
-        setTestResults(`${failedCount} test case(s) failed. Check the output.`);
+        setTestResults(`${failedCount} test case(s) failed. Check the output below.`);
         toast.error(`${failedCount} tests failed`);
       }
+      setExecutionResults(result.results);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Code execution failed';
       toast.error(errorMessage);
@@ -180,8 +184,22 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCode('// Write your solution here\n');
         setTestResults(null);
+        setExecutionResults([]);
       } else {
-        toast.success('All questions completed! Waiting for results...');
+        toast.success('All questions completed!');
+
+        // If AI mode, trigger AI simulation to determine winner
+        if (mode === 'Ai') {
+          toast.info('AI is calculating its results...');
+          try {
+            await simulateAiSubmission(Number(competitionId));
+            toast.success('Match results are ready!');
+          } catch (error) {
+            console.error('Failed to trigger AI simulation:', error);
+          }
+        } else {
+          toast.success('Waiting for other players to finish...');
+        }
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Submission failed';
@@ -239,8 +257,38 @@ export const CodeArena: React.FC<CodeArenaProps> = ({ competitionId, questions }
           </div>
 
           {testResults && (
-            <div className={`p-3 rounded-md text-sm ${testResults.includes('passed') ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}>
-              {testResults}
+            <div className={`p-4 rounded-lg text-sm border shadow-sm ${testResults.includes('passed') ? 'bg-green-50 border-green-200 text-green-900' : 'bg-red-50 border-red-200 text-red-900'}`}>
+              <div className="font-bold mb-2">{testResults}</div>
+              {executionResults.length > 0 && (
+                <div className="space-y-2 mt-3 max-h-[500px] overflow-y-auto">
+                  {executionResults.map((res, i) => (
+                    <div key={i} className={`p-2 rounded border ${res.passed ? 'bg-green-100/50 border-green-200' : 'bg-red-100/50 border-red-200'}`}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold text-xs text-muted-foreground">Test Case #{i + 1}</span>
+                        <Badge variant={res.passed ? 'default' : 'destructive'} className="h-4 text-[10px]">
+                          {res.passed ? 'Passed' : 'Failed'}
+                        </Badge>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono whitespace-pre-wrap">
+                        <div>
+                          <div className="text-muted-foreground uppercase opacity-70">Input</div>
+                          <div className="bg-black/5 p-1 rounded mt-0.5 break-all">{res.input}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground uppercase opacity-70">Expected</div>
+                          <div className="bg-black/5 p-1 rounded mt-0.5 break-all">{res.expected}</div>
+                        </div>
+                        <div className="col-span-1 sm:col-span-2">
+                          <div className="text-muted-foreground uppercase opacity-70">Actual Output</div>
+                          <div className={`p-1 rounded mt-0.5 break-all ${res.passed ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
+                            {res.actual || (res.error ? <span className="text-red-500">{res.error}</span> : 'null')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

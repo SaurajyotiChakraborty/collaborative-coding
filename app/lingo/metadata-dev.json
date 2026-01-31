@@ -1,248 +1,750 @@
 {
   "entries": {
-    "b08f302d9bd2": {
+    "2a2363afd936": {
       "type": "content",
-      "sourceText": "Loading workspace details...",
+      "sourceText": "Loading arena...",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
       },
-      "hash": "b08f302d9bd2",
+      "hash": "2a2363afd936",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 515,
-        "column": 10
-      }
-    },
-    "4c233f0bc798": {
-      "type": "content",
-      "sourceText": "Back to Dashboard",
-      "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
-      },
-      "hash": "4c233f0bc798",
-      "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 544,
-        "column": 10
-      }
-    },
-    "0e73dfdf435b": {
-      "type": "content",
-      "sourceText": "Open in Browser",
-      "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
-      },
-      "hash": "0e73dfdf435b",
-      "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 561,
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 59,
         "column": 16
       }
     },
-    "db17a7a4310c": {
-      "type": "attribute",
-      "sourceText": "Workspace Editor",
+    "1c24c058b0de": {
+      "type": "content",
+      "sourceText": "Global Tournaments",
       "context": {
-        "attributeName": "title",
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
       },
-      "hash": "db17a7a4310c",
+      "hash": "1c24c058b0de",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 565,
-        "column": 14
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 69,
+        "column": 20
       }
     },
-    "9a98786da58a": {
+    "9ff8f4146bda": {
       "type": "content",
-      "sourceText": "Ready to Code?",
+      "sourceText": "Compete with the best and climb the worldwide rankings",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
       },
-      "hash": "9a98786da58a",
+      "hash": "9ff8f4146bda",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 576,
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 72,
+        "column": 20
+      }
+    },
+    "5c88b5909736": {
+      "type": "content",
+      "sourceText": "Legendary Rewards",
+      "context": {
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
+      },
+      "hash": "5c88b5909736",
+      "location": {
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 77,
+        "column": 24
+      }
+    },
+    "1b30a6400e6e": {
+      "type": "content",
+      "sourceText": "Upcoming Events",
+      "context": {
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
+      },
+      "hash": "1b30a6400e6e",
+      "location": {
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 84,
         "column": 16
       }
     },
-    "fc0c124a3c0b": {
+    "4856676333d3": {
       "type": "content",
-      "sourceText": "Start the Cloud Environment to launch VS Code directly in your browser.",
+      "sourceText": "No Upcoming Tournaments",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
       },
-      "hash": "fc0c124a3c0b",
+      "hash": "4856676333d3",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 577,
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 95,
+        "column": 28
+      }
+    },
+    "936cb80dfcbc": {
+      "type": "content",
+      "sourceText": "Stay tuned for the next major event!",
+      "context": {
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
+      },
+      "hash": "936cb80dfcbc",
+      "location": {
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 96,
+        "column": 28
+      }
+    },
+    "b3690273a4df": {
+      "type": "content",
+      "sourceText": "Past Winners",
+      "context": {
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
+      },
+      "hash": "b3690273a4df",
+      "location": {
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 154,
         "column": 16
       }
     },
-    "068982fe122e": {
+    "78568ab1ad97": {
       "type": "content",
-      "sourceText": "Starting Container...",
+      "sourceText": "No past tournaments recorded yet.",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "TournamentView",
+        "filePath": "../components/dashboard/tournament-view.tsx"
       },
-      "hash": "068982fe122e",
+      "hash": "78568ab1ad97",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 586,
-        "column": 18
+        "filePath": "../components/dashboard/tournament-view.tsx",
+        "line": 160,
+        "column": 20
       }
     },
-    "e09397ebb1c9": {
+    "53221ad9b393": {
       "type": "content",
-      "sourceText": "Start Workspace",
+      "sourceText": "Question Not Found",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
       },
-      "hash": "e09397ebb1c9",
+      "hash": "53221ad9b393",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 591,
-        "column": 18
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 194,
+        "column": 20
       }
     },
-    "985c08038d53": {
+    "ea521e09e23f": {
       "type": "content",
-      "sourceText": "Team Chat & Voice",
+      "sourceText": "The practice challenge you're looking for could not be loaded. It might have been removed or moved.",
       "context": {
-        "componentName": "WorkspaceContainer",
-        "filePath": "../components/workspace/workspace-container.tsx"
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
       },
-      "hash": "985c08038d53",
+      "hash": "ea521e09e23f",
       "location": {
-        "filePath": "../components/workspace/workspace-container.tsx",
-        "line": 608,
-        "column": 14
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 195,
+        "column": 20
       }
     },
-    "5bab243b51a5": {
+    "f7111a67f9de": {
       "type": "content",
-      "sourceText": "Workspace",
+      "sourceText": "Back to Selection",
       "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
       },
-      "hash": "5bab243b51a5",
+      "hash": "f7111a67f9de",
       "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 197,
+        "column": 24
+      }
+    },
+    "508ee245d941": {
+      "type": "content",
+      "sourceText": "Try running the optimal seed script if you're an admin.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "508ee245d941",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 200,
+        "column": 24
+      }
+    },
+    "736e713629e7": {
+      "type": "content",
+      "sourceText": "Optimization Challenge",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "736e713629e7",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
         "line": 225,
+        "column": 24
+      }
+    },
+    "4ab8afc0d5cf": {
+      "type": "content",
+      "sourceText": "{expression0} Run Code",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "4ab8afc0d5cf",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 232,
+        "column": 20
+      }
+    },
+    "8bf741f65fac": {
+      "type": "content",
+      "sourceText": "{expression0} Run Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8bf741f65fac",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 262,
+        "column": 20
+      }
+    },
+    "cdfc40b3cc7f": {
+      "type": "content",
+      "sourceText": "Problem Description",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "cdfc40b3cc7f",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 284,
+        "column": 36
+      }
+    },
+    "453598af04a0": {
+      "type": "content",
+      "sourceText": "Test Results",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "453598af04a0",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 287,
+        "column": 36
+      }
+    },
+    "b9db963129b6": {
+      "type": "content",
+      "sourceText": "Live Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "b9db963129b6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 290,
+        "column": 36
+      }
+    },
+    "78196d715397": {
+      "type": "content",
+      "sourceText": "The Task",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "78196d715397",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 299,
+        "column": 40
+      }
+    },
+    "8d2b7ce0737a": {
+      "type": "content",
+      "sourceText": "Constraints",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8d2b7ce0737a",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 306,
+        "column": 40
+      }
+    },
+    "976247e027e9": {
+      "type": "content",
+      "sourceText": "The Optimal Approach",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "976247e027e9",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 316,
+        "column": 44
+      }
+    },
+    "516c2d10e267": {
+      "type": "content",
+      "sourceText": "Goal: {expression0} Time | {expression1} Space",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "516c2d10e267",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 325,
+        "column": 52
+      }
+    },
+    "8c34fda3cf18": {
+      "type": "content",
+      "sourceText": "The optimal solution for this challenge hasn't been verified by our AI architects yet. Check back soon or try to find it yourself!",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8c34fda3cf18",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 332,
+        "column": 52
+      }
+    },
+    "73df1136f267": {
+      "type": "content",
+      "sourceText": "No Results Yet",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "73df1136f267",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 348,
+        "column": 44
+      }
+    },
+    "5358746da65d": {
+      "type": "content",
+      "sourceText": "Click 'Run Code' to see how your solution performs against our test cases.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "5358746da65d",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 349,
+        "column": 44
+      }
+    },
+    "15f7fefc701e": {
+      "type": "content",
+      "sourceText": "{expression0}/{expression1} Test Cases Passed",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "15f7fefc701e",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 358,
+        "column": 52
+      }
+    },
+    "8543db58742f": {
+      "type": "content",
+      "sourceText": "Runtime: {expression0}ms",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8543db58742f",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 362,
+        "column": 48
+      }
+    },
+    "37ebd9e49baa": {
+      "type": "content",
+      "sourceText": "Ready for Analysis",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "37ebd9e49baa",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 427,
+        "column": 44
+      }
+    },
+    "3df78cd7ef04": {
+      "type": "content",
+      "sourceText": "Write your code and click 'Run Analysis' to see your performance metrics and comparisons.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "3df78cd7ef04",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 428,
+        "column": 44
+      }
+    },
+    "95f9bafaedde": {
+      "type": "content",
+      "sourceText": "Your Complexity",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "95f9bafaedde",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 436,
+        "column": 56
+      }
+    },
+    "6f88f67d9551": {
+      "type": "content",
+      "sourceText": "Optimal Goal",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "6f88f67d9551",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 450,
+        "column": 56
+      }
+    },
+    "1a19107ff380": {
+      "type": "content",
+      "sourceText": "ABSOLUTE PERFECTION!",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "1a19107ff380",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 466,
+        "column": 52
+      }
+    },
+    "d19a0d0c2537": {
+      "type": "content",
+      "sourceText": "\"{quote}\"",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "d19a0d0c2537",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 467,
+        "column": 52
+      }
+    },
+    "bb7ba28b34b3": {
+      "type": "content",
+      "sourceText": "Master Optimizer",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "bb7ba28b34b3",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 471,
+        "column": 56
+      }
+    },
+    "77b402463ab6": {
+      "type": "content",
+      "sourceText": "+250 XP earned",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "77b402463ab6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 472,
+        "column": 56
+      }
+    },
+    "8fdc0e54f263": {
+      "type": "content",
+      "sourceText": "Next Challenge",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8fdc0e54f263",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 475,
+        "column": 56
+      }
+    },
+    "f4ea63d493ad": {
+      "type": "content",
+      "sourceText": "Optimization Tip",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "f4ea63d493ad",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 486,
+        "column": 52
+      }
+    },
+    "8c64d8529dd1": {
+      "type": "content",
+      "sourceText": "Your code is correct, but there's a more efficient way to handle this! Try focusing on reducing nested loops or using a more spatial data structure.",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "8c64d8529dd1",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 490,
+        "column": 52
+      }
+    },
+    "4051918076ee": {
+      "type": "content",
+      "sourceText": "Complexity Score",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "4051918076ee",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 498,
+        "column": 52
+      }
+    },
+    "5202046f8d13": {
+      "type": "content",
+      "sourceText": "Lines Used",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "5202046f8d13",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 502,
+        "column": 52
+      }
+    },
+    "bc30286cd73c": {
+      "type": "content",
+      "sourceText": "Rank",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "bc30286cd73c",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 506,
+        "column": 52
+      }
+    },
+    "9a213a95ee1c": {
+      "type": "content",
+      "sourceText": "Top 5%",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "9a213a95ee1c",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 507,
+        "column": 52
+      }
+    },
+    "87bfb4e3adfb": {
+      "type": "content",
+      "sourceText": "TypeScript Editor",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "87bfb4e3adfb",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 527,
+        "column": 28
+      }
+    },
+    "560233041ad6": {
+      "type": "content",
+      "sourceText": "Auto-saved",
+      "context": {
+        "componentName": "PracticeArena",
+        "filePath": "../components/practice/practice-arena.tsx"
+      },
+      "hash": "560233041ad6",
+      "location": {
+        "filePath": "../components/practice/practice-arena.tsx",
+        "line": 529,
+        "column": 24
+      }
+    },
+    "af97b8f60bbc": {
+      "type": "content",
+      "sourceText": "Question {expression0} of {expression1}",
+      "context": {
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
+      },
+      "hash": "af97b8f60bbc",
+      "location": {
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 220,
         "column": 10
       }
     },
-    "9f5ecb5324b4": {
+    "609edea2c161": {
       "type": "content",
-      "sourceText": "Chat",
+      "sourceText": "Code Editor",
       "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
       },
-      "hash": "9f5ecb5324b4",
+      "hash": "609edea2c161",
       "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 249,
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 230,
         "column": 12
       }
     },
-    "e42234e11e54": {
+    "202fef64057c": {
       "type": "content",
-      "sourceText": "Team ({expression0})",
+      "sourceText": "JavaScript",
       "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
       },
-      "hash": "e42234e11e54",
+      "hash": "202fef64057c",
       "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 250,
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 236,
+        "column": 16
+      }
+    },
+    "0c6010f62a9c": {
+      "type": "content",
+      "sourceText": "Python",
+      "context": {
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
+      },
+      "hash": "0c6010f62a9c",
+      "location": {
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 237,
+        "column": 16
+      }
+    },
+    "80f4b7f524f6": {
+      "type": "content",
+      "sourceText": "Java",
+      "context": {
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
+      },
+      "hash": "80f4b7f524f6",
+      "location": {
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 238,
+        "column": 16
+      }
+    },
+    "1b374600a682": {
+      "type": "content",
+      "sourceText": "C++",
+      "context": {
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
+      },
+      "hash": "1b374600a682",
+      "location": {
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 239,
+        "column": 16
+      }
+    },
+    "5457c35f4607": {
+      "type": "content",
+      "sourceText": "Run Tests",
+      "context": {
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
+      },
+      "hash": "5457c35f4607",
+      "location": {
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 296,
         "column": 12
       }
     },
-    "2901e50cc6d4": {
+    "be469b3a2176": {
       "type": "content",
-      "sourceText": "is calling...",
+      "sourceText": "⚠️ Anti-cheat alerts: {expression0}{expression1}",
       "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
+        "componentName": "CodeArena",
+        "filePath": "../components/competition/code-arena.tsx"
       },
-      "hash": "2901e50cc6d4",
+      "hash": "be469b3a2176",
       "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 260,
-        "column": 16
-      }
-    },
-    "10f2c232e48a": {
-      "type": "content",
-      "sourceText": "Join",
-      "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
-      },
-      "hash": "10f2c232e48a",
-      "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 263,
-        "column": 16
-      }
-    },
-    "54c8237ff6ea": {
-      "type": "content",
-      "sourceText": "Ignore",
-      "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
-      },
-      "hash": "54c8237ff6ea",
-      "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 264,
-        "column": 16
-      }
-    },
-    "5b05917610af": {
-      "type": "content",
-      "sourceText": "No Radio Traffic",
-      "context": {
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
-      },
-      "hash": "5b05917610af",
-      "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 279,
-        "column": 18
-      }
-    },
-    "50f7361901cd": {
-      "type": "attribute",
-      "sourceText": "Send message to team...",
-      "context": {
-        "attributeName": "placeholder",
-        "componentName": "ChatSidebar",
-        "filePath": "../components/workspace/chat-sidebar.tsx"
-      },
-      "hash": "50f7361901cd",
-      "location": {
-        "filePath": "../components/workspace/chat-sidebar.tsx",
-        "line": 318,
-        "column": 14
+        "filePath": "../components/competition/code-arena.tsx",
+        "line": 305,
+        "column": 12
       }
     }
   },
   "stats": {
-    "totalEntries": 17,
-    "lastUpdated": "2026-01-29T17:06:30.856Z"
+    "totalEntries": 53,
+    "lastUpdated": "2026-01-31T07:39:37.856Z"
   }
 }

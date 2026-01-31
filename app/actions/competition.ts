@@ -58,8 +58,8 @@ export async function createCompetition(data: {
             }
         })
 
-        // Check if competition should start immediately (e.g. AI mode with 1 participant)
-        if (data.maxParticipants === 1) {
+        // Check if competition should start immediately (e.g. AI mode or 1 participant)
+        if (data.mode === 'Ai' || data.maxParticipants === 1) {
             await startCompetition(competition.id);
         }
 

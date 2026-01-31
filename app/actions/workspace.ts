@@ -463,10 +463,47 @@ export async function startWorkspaceSession(workspaceId: number) {
             projectPath: workspacePath
         });
 
+        // Save containerId to DB using raw query to bypass stale client validation
+        await prisma.$executeRawUnsafe(
+            'UPDATE workspace_groups SET "containerId" = $1 WHERE id = $2',
+            containerInfo.containerId,
+            workspaceId
+        );
+
         return { success: true, url: containerInfo.url };
 
     } catch (error) {
         console.error('Failed to start workspace session:', error);
         return { success: false, error: 'Failed to start workspace session' };
+    }
+}
+
+export async function stopWorkspaceSession(workspaceId: number) {
+    try {
+        const result: any[] = await prisma.$queryRawUnsafe(
+            'SELECT "containerId", "leaderId" FROM workspace_groups WHERE id = $1',
+            workspaceId
+        );
+        const workspace = result[0];
+
+        if (!workspace) return { success: false, error: 'Workspace not found' };
+
+        if ((workspace as any).containerId) {
+            const runner = new RunnerService();
+            await runner.stopContainer((workspace as any).containerId);
+
+            // Clear containerId in DB using raw query
+            await prisma.$executeRawUnsafe(
+                'UPDATE workspace_groups SET "containerId" = NULL WHERE id = $1',
+                workspaceId
+            );
+        }
+
+        revalidatePath('/workspace');
+        return { success: true };
+
+    } catch (error) {
+        console.error('Failed to stop workspace session:', error);
+        return { success: false, error: 'Failed to stop workspace session' };
     }
 }

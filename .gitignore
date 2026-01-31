@@ -19,6 +19,9 @@
 /.next/
 /out/
 
+/nginx
+/.npm-cache
+
 # production
 /build
 

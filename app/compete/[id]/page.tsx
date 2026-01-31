@@ -81,6 +81,7 @@ const InProgressArena = ({ competition }: { competition: any }) => (
 
             <CodeArena
                 competitionId={BigInt(competition.id)}
+                mode={competition.mode}
                 questions={competition.questions.map((q: any) => ({
                     questionId: BigInt(q.id),
                     title: q.title,

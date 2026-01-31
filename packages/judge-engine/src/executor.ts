@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 export interface ExecutionConfig {
     language: 'javascript' | 'python' | 'java' | 'cpp';
     code: string;
-    testCases: Array<{ input: string; expectedOutput: string }>;
+    testCases: Array<{ input: string; output: string }>;
     timeLimit?: number; // milliseconds
     memoryLimit?: number; // MB
 }
@@ -29,7 +29,24 @@ export interface ExecutionResult {
     spaceComplexity: string;
 }
 
-const LANGUAGE_CONFIG = {
+interface BaseLanguageConfig {
+    extension: string;
+    command: string;
+}
+
+interface InterpretedLanguageConfig extends BaseLanguageConfig {
+    args: (file: string) => string[];
+}
+
+interface CompiledLanguageConfig extends BaseLanguageConfig {
+    compileArgs: (file: string, output: string) => string[];
+    runCommand: string;
+    runArgs: (output: string) => string[];
+}
+
+type LanguageConfigItem = InterpretedLanguageConfig | CompiledLanguageConfig;
+
+const LANGUAGE_CONFIG: Record<string, LanguageConfigItem> = {
     javascript: {
         extension: 'js',
         command: 'node',
@@ -43,7 +60,7 @@ const LANGUAGE_CONFIG = {
     java: {
         extension: 'java',
         command: 'javac',
-        compileArgs: (file: string) => [file],
+        compileArgs: (file: string, _output: string) => [file],
         runCommand: 'java',
         runArgs: (className: string) => [className],
     },
@@ -87,7 +104,7 @@ export class CodeExecutor {
             }
 
             const allPassed = results.every(r => r.passed);
-            const avgMemory = totalMemory / results.length;
+            const avgMemory = totalMemory / results.length || 0;
 
             // Estimate complexity (basic heuristic)
             const complexity = this.estimateComplexity(results, config.testCases);
@@ -111,7 +128,7 @@ export class CodeExecutor {
 
     private async runSingleTest(
         config: ExecutionConfig,
-        testCase: { input: string; expectedOutput: string },
+        testCase: { input: string; output: string },
         workDir: string,
         executionId: string
     ) {
@@ -126,11 +143,14 @@ export class CodeExecutor {
         const startMemory = process.memoryUsage().heapUsed;
 
         try {
+            const outputName = fileName.replace(`.${langConfig.extension}`, '');
+            const outputPath = join(workDir, outputName);
+
             // Compile if needed
-            if ('compileArgs' in langConfig && langConfig.compileArgs) {
+            if ('compileArgs' in langConfig) {
                 await this.runProcess(
                     langConfig.command,
-                    langConfig.compileArgs(filePath),
+                    langConfig.compileArgs(filePath, outputPath),
                     workDir,
                     '',
                     config.timeLimit || 5000
@@ -140,8 +160,8 @@ export class CodeExecutor {
             // Execute
             const command = 'runCommand' in langConfig ? langConfig.runCommand : langConfig.command;
             const args = 'runArgs' in langConfig
-                ? langConfig.runArgs(fileName.replace(`.${langConfig.extension}`, ''))
-                : langConfig.args(filePath);
+                ? langConfig.runArgs(outputName)
+                : (langConfig as InterpretedLanguageConfig).args(filePath);
 
             const output = await this.runProcess(
                 command,
@@ -155,7 +175,7 @@ export class CodeExecutor {
             const memoryUsed = (process.memoryUsage().heapUsed - startMemory) / 1024 / 1024; // MB
 
             const actualOutput = output.trim();
-            const expectedOutput = testCase.expectedOutput.trim();
+            const expectedOutput = testCase.output.trim();
             const passed = actualOutput === expectedOutput;
 
             return {
@@ -172,7 +192,7 @@ export class CodeExecutor {
             return {
                 passed: false,
                 input: testCase.input,
-                expected: testCase.expectedOutput,
+                expected: testCase.output,
                 actual: null,
                 error: error instanceof Error ? error.message : 'Execution error',
                 executionTime,

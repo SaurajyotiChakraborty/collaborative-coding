@@ -36,19 +36,44 @@ export async function generateDailyChallenges() {
 
         // Generate 3 questions with AI
         const prompt = `Generate 3 diverse coding interview questions (Easy, Medium, Hard).
-        Return as JSON array of objects: 
-        [{ title, description, difficulty, testCases: [{input, output}], constraints, tags, canonicalSolution, optimalTimeComplexity, optimalSpaceComplexity }]`;
+        Return ONLY valid JSON with the following structure:
+        {
+          "questions": [
+            { "title": "...", "description": "...", "difficulty": "...", "testCases": [{"input": "...", "output": "..."}], "constraints": "...", "tags": ["..."], "canonicalSolution": "...", "optimalTimeComplexity": "...", "optimalSpaceComplexity": "..." }
+          ]
+        }`;
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                { role: "system", content: "You are a senior algorithm engineer." },
-                { role: "user", content: prompt }
-            ],
-            response_format: { type: "json_object" }
+        const geminiKey = process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_API_KEY;
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `You are a senior algorithm engineer. ${prompt}`
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 2000,
+                    responseMimeType: "application/json"
+                }
+            }),
         });
 
-        const data = JSON.parse(response.choices[0].message.content || '{"questions": []}');
+        if (!geminiResponse.ok) {
+            const errorData = await geminiResponse.json();
+            throw new Error(`Gemini API error: ${JSON.stringify(errorData)}`);
+        }
+
+        const geminiData = await geminiResponse.json();
+        const generatedContent = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!generatedContent) throw new Error("No content generated");
+
+        const data = JSON.parse(generatedContent);
         const admin = await prisma.user.findFirst({ where: { role: 'Admin' } });
 
         if (!admin) throw new Error("No admin found to assign questions to");

@@ -296,7 +296,7 @@ export default function DashboardPage() {
                 <div className="flex-1 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-600 mx-auto"></div>
                 </div>
-            ) : !user ? (
+            ) : (!user || !user.id) ? (
                 <div className="flex-1 flex items-center justify-center">
                     <p className="text-muted-foreground">Redirecting to login...</p>
                 </div>

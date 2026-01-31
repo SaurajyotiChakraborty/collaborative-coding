@@ -13,7 +13,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     const maxReconnectAttempts = 5;
 
     useEffect(() => {
-        const socketUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3000';
+        const socketUrl = process.env.NEXT_PUBLIC_WS_URL || '';
         const newSocket = io(socketUrl, {
             transports: ['websocket', 'polling'],
             reconnection: true,
